@@ -2,4 +2,4 @@
 Flask==0.10.1
 
 # Local vendored dependencies
-./vendor/Adafruit_DotStar_Pi
+vendor/Adafruit_DotStar_Pi
