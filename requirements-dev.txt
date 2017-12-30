@@ -1,0 +1,16 @@
+# --- Main app dependencies ---
+# -- PyPI dependencies --
+
+# -- Local vendored dependencies --
+# Don't use Adafruit DotStar lib for local dev -> only works on Pi
+# vendor/Adafruit_DotStar_Pi
+
+# --- Local dev dependencies ---
+# -- PyPI dependencies --
+# DotStar_Emulator~=0.2
+DotStar-Emulator==0.2
+blinker==1.4
+olefile==0.44
+Pillow==4.3.0
+pygame==1.9.3
+six==1.11.0
