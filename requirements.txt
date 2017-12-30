@@ -1,0 +1,4 @@
+# PyPI dependencies
+
+# Local vendored dependencies
+vendor/Adafruit_DotStar_Pi
