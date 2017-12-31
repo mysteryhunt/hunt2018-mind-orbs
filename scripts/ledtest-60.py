@@ -39,16 +39,8 @@ else:
 
 
 def set_brightness(value):
-    # Adafruit lib takes brightness [0, 255] where 0 -> full
-    # Scale to [0, 255]
-    lib_val = int(255 * value)
-    # Scale to [1, 256]
-    lib_val += 1
-    # Convert 256 (full brightness) -> 0
-    if lib_val == 256:
-        lib_val = 0
-
-    strip.setBrightness(lib_val)
+    # Adafruit lib takes brightness [0, 255]
+    strip.setBrightness(int(255 * value))
 
 
 brightness_iter = itertools.cycle((0.1, 0.25, 0.5, 0.75, 1.0))
