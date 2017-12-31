@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 
 # Simple strand test for Adafruit Dot Star RGB LED strip.
 # This is a basic diagnostic tool, NOT a graphics demo...helps confirm
@@ -7,8 +7,13 @@
 # and color of LEDs, it's reasonably safe to power a couple meters off
 # USB.  DON'T try that with other code!
 
+import os
 import time
-from dotstar import Adafruit_DotStar
+
+if os.getenv('RESIN'):
+    from dotstar import Adafruit_DotStar
+else:
+    from DotStar_Emulator import Adafruit_DotStar
 
 numpixels = 60  # Number of LEDs in strip
 
@@ -16,7 +21,11 @@ numpixels = 60  # Number of LEDs in strip
 # datapin  = 23
 # clockpin = 24
 # strip    = Adafruit_DotStar(numpixels, datapin, clockpin)
-strip = Adafruit_DotStar(numpixels, 12000000, order='bgr')
+if os.getenv('RESIN'):
+    strip = Adafruit_DotStar(numpixels, 12000000, order='bgr')
+else:
+    # Unfortunately: the emulator doesn't support the `order` kwarg...
+    strip = Adafruit_DotStar(numpixels)
 
 # Alternate ways of declaring strip:
 #  Adafruit_DotStar(npix, dat, clk, 1000000) # Bitbang @ ~1 MHz
