@@ -44,7 +44,7 @@ class SceneManager(object):
         self.num_pixels = num_pixels
         self.ledbuffer = LedBuffer(num_pixels)
         self.scene = None
-        self.set_scene(default_scene, 0)
+        self._set_scene(default_scene, 0)
 
         if os.getenv('RESIN'):
             self._dotstar_strip = Adafruit_DotStar(
@@ -55,18 +55,6 @@ class SceneManager(object):
             self._dotstar_strip = Adafruit_DotStar(num_pixels)
 
         self._dotstar_strip.begin()
-
-    def set_scene(self, new_scene, fadetime):
-        if self.scene.__class__ is new_scene.__class__:
-            # Make this a no-op if the scene has not changed
-            print("Ignoring scene change: old={}, new={}".format(
-                self.scene, new_scene
-            ))
-            return
-
-        print("Changing scene: old={}, new={}, fadetime={}".format(
-            self.scene, new_scene, fadetime))
-        self.scene = new_scene(self.ledbuffer, fadetime)
 
     def run(self):
         # TODO: REMOVE THIS!
@@ -82,28 +70,47 @@ class SceneManager(object):
         while True:
             frame_timestamp = time.time()
             self.scene.loop(frame_timestamp)
-
-            self._dotstar_strip.setBrightness(
-                int(255 * self.ledbuffer.brightness)
-            )
-
-            for idx in xrange(self.num_pixels):
-                color = self.ledbuffer.leds[idx]
-                self._dotstar_strip.setPixelColor(
-                    idx,
-                    color[0] << (2 * 8) |
-                    color[1] << (1 * 8) |
-                    color[2] << (0 * 8)
-                )
-
-            self._dotstar_strip.show()
+            self._run_leds(frame_timestamp)
+            self._run_projector(frame_timestamp)
 
             # TODO: REMOVE THIS!
             if last_change is None:
                 last_change = frame_timestamp
 
             if frame_timestamp - last_change >= 5:
-                self.set_scene(next(scene_iter), 3)
+                self._set_scene(next(scene_iter), 3)
                 last_change = frame_timestamp
 
-            time.sleep(1.0 / 50)
+            time.sleep(1.0 / 50)  # TODO: calculate real frame times
+
+    def _set_scene(self, new_scene, fadetime):
+        if self.scene.__class__ is new_scene.__class__:
+            # Make this a no-op if the scene has not changed
+            print("Ignoring scene change: old={}, new={}".format(
+                self.scene, new_scene
+            ))
+            return
+
+        print("Changing scene: old={}, new={}, fadetime={}".format(
+            self.scene, new_scene, fadetime))
+        self.scene = new_scene(self.ledbuffer, fadetime)
+
+    def _run_leds(self, frame_timestamp):
+        self._dotstar_strip.setBrightness(
+            int(255 * self.ledbuffer.brightness)
+        )
+
+        for idx in xrange(self.num_pixels):
+            color = self.ledbuffer.leds[idx]
+            self._dotstar_strip.setPixelColor(
+                idx,
+                color[0] << (2 * 8) |
+                color[1] << (1 * 8) |
+                color[2] << (0 * 8)
+            )
+
+        self._dotstar_strip.show()
+
+    def _run_projector(self, frame_timestamp):
+        # TODO: implement
+        pass
