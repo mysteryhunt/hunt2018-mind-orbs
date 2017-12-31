@@ -12,7 +12,7 @@ if os.getenv('RESIN'):
 else:
     from DotStar_Emulator import Adafruit_DotStar
 
-from mindorb import effects
+from mindorb import scenes
 from mindorb.scenetypes import LedColor
 
 
@@ -38,13 +38,13 @@ class LedBuffer(object):
 class LedManager(object):
     def __init__(
         self, num_pixels,
-        default_effect=effects.SolidBlack,
+        default_scene=scenes.SolidBlack,
         spi_dev=SpiDevice.primary, spi_freq=12000000, led_order='bgr'
     ):
         self.num_pixels = num_pixels
         self.ledbuffer = LedBuffer(num_pixels)
-        self.effect = None
-        self.set_effect(default_effect, 0)
+        self.scene = None
+        self.set_scene(default_scene, 0)
 
         if os.getenv('RESIN'):
             self._dotstar_strip = Adafruit_DotStar(
@@ -56,22 +56,22 @@ class LedManager(object):
 
         self._dotstar_strip.begin()
 
-    def set_effect(self, new_effect, fadetime):
-        if self.effect.__class__ is new_effect.__class__:
-            # Make this a no-op if the effect has not changed
-            print("Ignoring effect change: old={}, new={}".format(
-                self.effect, new_effect
+    def set_scene(self, new_scene, fadetime):
+        if self.scene.__class__ is new_scene.__class__:
+            # Make this a no-op if the scene has not changed
+            print("Ignoring scene change: old={}, new={}".format(
+                self.scene, new_scene
             ))
             return
 
-        print("Changing effect: old={}, new={}, fadetime={}".format(
-            self.effect, new_effect, fadetime))
-        self.effect = new_effect(self.ledbuffer, fadetime)
+        print("Changing scene: old={}, new={}, fadetime={}".format(
+            self.scene, new_scene, fadetime))
+        self.scene = new_scene(self.ledbuffer, fadetime)
 
     def run(self):
         while True:
             frame_timestamp = 0  # TODO: make this real
-            self.effect.loop(frame_timestamp)
+            self.scene.loop(frame_timestamp)
 
             self._dotstar_strip.setBrightness(
                 int(255 * self.ledbuffer.brightness)

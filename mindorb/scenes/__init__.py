@@ -1,4 +1,4 @@
-"""Top-level container module for effect classes"""
+"""Top-level container module for scene classes"""
 
 from __future__ import division, absolute_import, print_function
 

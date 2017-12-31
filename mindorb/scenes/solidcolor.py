@@ -1,4 +1,4 @@
-"""Basic / static solid color effect"""
+"""Basic / static solid color scene"""
 
 from __future__ import division, absolute_import, print_function
 
