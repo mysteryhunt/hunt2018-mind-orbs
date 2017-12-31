@@ -16,6 +16,8 @@ if os.getenv('RESIN'):
 else:
     from DotStar_Emulator import Adafruit_DotStar
 
+print "Starting `ledtest-60`"
+
 numpixels = 60  # Number of LEDs in strip
 
 # Here's how to control the strip from any two GPIO pins:
@@ -40,6 +42,8 @@ else:
 
 def set_brightness(value):
     # Adafruit lib takes brightness [0, 255]
+    lib_val = int(255 * value)
+    print "Setting brightness: {}".format(locals())
     strip.setBrightness(int(255 * value))
 
 
