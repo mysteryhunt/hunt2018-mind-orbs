@@ -23,3 +23,13 @@ class SolidBlack(SolidColorBase):
 class SolidRed(SolidColorBase):
     def __init__(self, ledbuffer, fadetime):
         super(SolidRed, self).__init__(ledbuffer, fadetime, LedColor.red)
+
+
+class SolidGreen(SolidColorBase):
+    def __init__(self, ledbuffer, fadetime):
+        super(SolidGreen, self).__init__(ledbuffer, fadetime, LedColor.green)
+
+
+class SolidBlue(SolidColorBase):
+    def __init__(self, ledbuffer, fadetime):
+        super(SolidBlue, self).__init__(ledbuffer, fadetime, LedColor.blue)

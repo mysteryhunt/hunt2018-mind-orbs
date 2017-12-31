@@ -9,7 +9,6 @@ from mindorb import scenes
 
 def main():
     led_manager = LedManager(20)
-    led_manager.set_scene(scenes.SolidRed, 3)
     led_manager.run()
 
 

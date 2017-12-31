@@ -69,8 +69,18 @@ class LedManager(object):
         self.scene = new_scene(self.ledbuffer, fadetime)
 
     def run(self):
+        # TODO: REMOVE THIS!
+        last_change = None
+        import itertools
+        scene_iter = itertools.cycle((
+            scenes.SolidRed,
+            scenes.SolidGreen,
+            scenes.SolidBlue,
+            scenes.SolidBlack,
+        ))
+
         while True:
-            frame_timestamp = 0  # TODO: make this real
+            frame_timestamp = time.time()
             self.scene.loop(frame_timestamp)
 
             self._dotstar_strip.setBrightness(
@@ -87,5 +97,13 @@ class LedManager(object):
                 )
 
             self._dotstar_strip.show()
+
+            # TODO: REMOVE THIS!
+            if last_change is None:
+                last_change = frame_timestamp
+
+            if frame_timestamp - last_change >= 5:
+                self.set_scene(next(scene_iter), 3)
+                last_change = frame_timestamp
 
             time.sleep(1.0 / 50)
