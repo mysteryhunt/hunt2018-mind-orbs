@@ -16,7 +16,7 @@
 #
 
 # Number of Rows and Columns of LEDS
-# GRID_SIZE = (8, 8)
+GRID_SIZE = (6, 6)
 
 # Change border size of each LED. Default is 1, 1.  Unit is pixels
 # BORDER_SIZE = (1, 1)
@@ -72,12 +72,16 @@
 
 # This below example only defines 12 out of 16 possible grid locations.
 
-# PIXEL_MAPPING = [
-#     [None, 0, 1, None],
-#     [6, 7, 8, 9],
-#     [2, 3, 4, 5],
-#     [None, 10, 11, None],
-# ]
+# 2 concentric circles -> numbered clockwise -> outer first -> inner second
+NA = None
+PIXEL_MAPPING = [
+    [NA, NA, 11,  0, NA, NA],
+    [NA, 10, 19, 12,  1, NA],
+    [ 9, 18, NA, NA, 13,  2],
+    [ 8, 17, NA, NA, 14,  3],
+    [NA,  7, 16, 15,  4, NA],
+    [NA, NA,  6,  5, NA, NA],
+]
 
 ######################################################################################
 #
