@@ -64,10 +64,18 @@ class SceneManager(Thread):
         self._dotstar_strip.begin()
 
     def push_scene(self, new_scene, fadetime):
-        # TODO: probably support string-based scenes here
+        if isinstance(new_scene, str):
+            try:
+                new_scene = getattr(scenes.AllScenes, new_scene).value
+            except AttributeError:
+                raise ValueError(
+                    "`new_scene` '{}' not found!".format(new_scene)
+                )
+
         print("Queueing scene change: new_scene={}, fadetime={}".format(
             new_scene, fadetime
         ))
+
         # TODO: Maybe make this bounded?
         self._scene_queue.append((new_scene, fadetime))
 

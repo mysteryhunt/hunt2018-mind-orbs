@@ -5,8 +5,6 @@ from __future__ import division, absolute_import, print_function
 import time
 from threading import Thread
 
-from mindorb import scenes
-
 
 class CommandReceiver(Thread):
     def __init__(self, scene_manager):
@@ -21,10 +19,10 @@ class CommandReceiver(Thread):
         last_change = None
         import itertools
         scene_iter = itertools.cycle((
-            scenes.SolidRed,
-            scenes.SolidGreen,
-            scenes.SolidBlue,
-            scenes.SolidBlack,
+            'SolidRed',
+            'SolidGreen',
+            'SolidBlue',
+            'SolidBlack',
         ))
 
         while not self.shutdown:
