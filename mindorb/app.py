@@ -3,13 +3,15 @@
 
 from __future__ import division, absolute_import, print_function
 
-from mindorb.ledcontrol import LedManager
+from threading import Thread
+
+from mindorb.scenecontrol import SceneManager
 from mindorb import scenes
 
 
 def main():
-    led_manager = LedManager(20)
-    led_manager.run()
+    scene_manager = SceneManager(20)
+    scene_manager.run()
 
 
 if __name__ == '__main__':

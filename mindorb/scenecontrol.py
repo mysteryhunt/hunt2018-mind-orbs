@@ -35,7 +35,7 @@ class LedBuffer(object):
             self.leds[idx] = color
 
 
-class LedManager(object):
+class SceneManager(object):
     def __init__(
         self, num_pixels,
         default_scene=scenes.SolidBlack,
