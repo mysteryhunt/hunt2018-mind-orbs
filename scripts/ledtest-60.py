@@ -7,6 +7,7 @@
 # and color of LEDs, it's reasonably safe to power a couple meters off
 # USB.  DON'T try that with other code!
 
+import itertools
 import os
 import time
 
@@ -36,8 +37,24 @@ else:
 # See image-pov.py for explanation of no-pixel-buffer use.
 # Append "order='gbr'" to declaration for proper colors w/older DotStar strips)
 
+
+def set_brightness(value):
+    # Adafruit lib takes brightness [0, 255] where 0 -> full
+    # Scale to [0, 255]
+    lib_val = int(255 * value)
+    # Scale to [1, 256]
+    lib_val += 1
+    # Convert 256 (full brightness) -> 0
+    if lib_val == 256:
+        lib_val = 0
+
+    strip.setBrightness(lib_val)
+
+
+brightness_iter = itertools.cycle((0.1, 0.25, 0.5, 0.75, 1.0))
+
 strip.begin()           # Initialize pins for output
-strip.setBrightness(64)  # Limit brightness to ~1/4 duty cycle
+set_brightness(next(brightness_iter))
 
 # Runs 10 LEDs at a time along strip, cycling through red, green and blue.
 # This requires about 200 mA for all the 'on' pixels + 1 mA per 'off' pixel.
@@ -59,6 +76,7 @@ while True:                              # Loop forever
         color >>= 8              # Red->green->blue->black
         if(color == 0):
             color = 0xFF0000  # If black, reset to red
+            set_brightness(next(brightness_iter))
 
     tail += 1                        # Advance tail position
     if(tail >= numpixels):
