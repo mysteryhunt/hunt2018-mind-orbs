@@ -3,19 +3,31 @@
 
 from __future__ import division, absolute_import, print_function
 
-from threading import Thread
-
+from mindorb.commandreceiver import CommandReceiver
 from mindorb.scenecontrol import SceneManager
-from mindorb import scenes
 
 
 def main():
-    scene_manager = SceneManager(20)
-    scene_thread = Thread(name="scene-manager", target=scene_manager.run)
-    scene_thread.run()
+    threads = []
 
-    # TODO: hard-fail if any sub-thread exits -> process restart from systemd
-    scene_thread.join()
+    scene_manager = SceneManager(20)
+    threads.append(scene_manager)
+    command_rcvr = CommandReceiver(scene_manager)
+    threads.append(command_rcvr)
+
+    for t in threads:
+        t.start()
+
+    # TODO: do this all less shitty maybe?
+    while len([t for t in threads if t.is_alive()]) > 0:
+        try:
+            for t in threads:
+                if t.is_alive():
+                    t.join(1)
+        except KeyboardInterrupt:
+            print("KeyboardInterrupt received! -> sending shutdown...")
+            for t in threads:
+                t.shutdown = True
 
 
 if __name__ == '__main__':

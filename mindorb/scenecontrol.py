@@ -7,6 +7,7 @@ from enum import Enum
 from itertools import repeat
 import os
 import time
+from threading import Thread
 
 if os.getenv('RESIN'):
     from dotstar import Adafruit_DotStar
@@ -36,12 +37,15 @@ class LedBuffer(object):
             self.leds[idx] = color
 
 
-class SceneManager(object):
+class SceneManager(Thread):
     def __init__(
         self, num_pixels,
         default_scene=scenes.SolidBlack,
         spi_dev=SpiDevice.primary, spi_freq=12000000, led_order='bgr'
     ):
+        super(SceneManager, self).__init__(name="scene-manager")
+        self.shutdown = False
+
         self.num_pixels = num_pixels
         self.ledbuffer = LedBuffer(num_pixels)
 
@@ -64,35 +68,21 @@ class SceneManager(object):
         print("Queueing scene change: new_scene={}, fadetime={}".format(
             new_scene, fadetime
         ))
+        # TODO: Maybe make this bounded?
         self._scene_queue.append((new_scene, fadetime))
 
     def run(self):
-        # TODO: REMOVE THIS!
-        last_change = None
-        import itertools
-        scene_iter = itertools.cycle((
-            scenes.SolidRed,
-            scenes.SolidGreen,
-            scenes.SolidBlue,
-            scenes.SolidBlack,
-        ))
-
-        while True:
+        print("Running SceneManager...")
+        while not self.shutdown:
             frame_timestamp = time.time()
             self.scene.loop(frame_timestamp)
             self._run_leds(frame_timestamp)
             self._run_projector(frame_timestamp)
             self._pop_scene()
 
-            # TODO: REMOVE THIS!
-            if last_change is None:
-                last_change = frame_timestamp
-
-            if frame_timestamp - last_change >= 5:
-                self.push_scene(next(scene_iter), 3)
-                last_change = frame_timestamp
-
             time.sleep(1.0 / 50)  # TODO: calculate real frame times
+
+        self._cleanup()
 
     def _pop_scene(self):
         try:
@@ -133,3 +123,13 @@ class SceneManager(object):
     def _run_projector(self, frame_timestamp):
         # TODO: implement
         pass
+
+    def _cleanup(self):
+        print("Cleaning up SceneManager...")
+
+        print("Blanking LEDs...")
+        for idx in xrange(self.num_pixels):
+            self._dotstar_strip.setPixelColor(idx, 0x000000)
+        self._dotstar_strip.show()
+
+        print("Done cleaning up SceneManager")
