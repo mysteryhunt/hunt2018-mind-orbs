@@ -1,4 +1,6 @@
-# PyPI dependencies
+# -- PyPI dependencies --
+# enum34~=1.1
+enum34==1.1.6
 
-# Local vendored dependencies
+# -- Local vendored dependencies --
 vendor/Adafruit_DotStar_Pi
