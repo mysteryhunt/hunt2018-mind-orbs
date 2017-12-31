@@ -2,6 +2,7 @@
 
 from __future__ import division, absolute_import, print_function
 
+import collections
 from enum import Enum
 from itertools import repeat
 import os
@@ -43,6 +44,8 @@ class SceneManager(object):
     ):
         self.num_pixels = num_pixels
         self.ledbuffer = LedBuffer(num_pixels)
+
+        self._scene_queue = collections.deque()  # TODO: maybe bound this?
         self.scene = None
         self._set_scene(default_scene, 0)
 
@@ -55,6 +58,13 @@ class SceneManager(object):
             self._dotstar_strip = Adafruit_DotStar(num_pixels)
 
         self._dotstar_strip.begin()
+
+    def push_scene(self, new_scene, fadetime):
+        # TODO: probably support string-based scenes here
+        print("Queueing scene change: new_scene={}, fadetime={}".format(
+            new_scene, fadetime
+        ))
+        self._scene_queue.append((new_scene, fadetime))
 
     def run(self):
         # TODO: REMOVE THIS!
@@ -72,16 +82,25 @@ class SceneManager(object):
             self.scene.loop(frame_timestamp)
             self._run_leds(frame_timestamp)
             self._run_projector(frame_timestamp)
+            self._pop_scene()
 
             # TODO: REMOVE THIS!
             if last_change is None:
                 last_change = frame_timestamp
 
             if frame_timestamp - last_change >= 5:
-                self._set_scene(next(scene_iter), 3)
+                self.push_scene(next(scene_iter), 3)
                 last_change = frame_timestamp
 
             time.sleep(1.0 / 50)  # TODO: calculate real frame times
+
+    def _pop_scene(self):
+        try:
+            new_scene, fadetime = self._scene_queue.popleft()
+            self._set_scene(new_scene, fadetime)
+        except IndexError:
+            # This is fine -> no scene is available to change
+            pass
 
     def _set_scene(self, new_scene, fadetime):
         if self.scene.__class__ is new_scene.__class__:

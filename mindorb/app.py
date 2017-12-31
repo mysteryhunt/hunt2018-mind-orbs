@@ -11,7 +11,11 @@ from mindorb import scenes
 
 def main():
     scene_manager = SceneManager(20)
-    scene_manager.run()
+    scene_thread = Thread(name="scene-manager", target=scene_manager.run)
+    scene_thread.run()
+
+    # TODO: hard-fail if any sub-thread exits -> process restart from systemd
+    scene_thread.join()
 
 
 if __name__ == '__main__':
