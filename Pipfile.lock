@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "9f4b97359b8e8e3966e57b2d8274c98e9f6e2a576a314bfc6d5d1002eceb5e6c"
+            "sha256": "d55421b965729af4cdd9e018f8aff6ecc1b4da1b02fdbbc3afc76a20468e0f60"
         },
         "host-environment-markers": {
             "implementation_name": "cpython",
@@ -9,12 +9,12 @@
             "os_name": "posix",
             "platform_machine": "x86_64",
             "platform_python_implementation": "CPython",
-            "platform_release": "16.7.0",
-            "platform_system": "Darwin",
-            "platform_version": "Darwin Kernel Version 16.7.0: Mon Nov 13 21:56:25 PST 2017; root:xnu-3789.72.11~1/RELEASE_X86_64",
-            "python_full_version": "2.7.14",
+            "platform_release": "4.4.0-67-generic",
+            "platform_system": "Linux",
+            "platform_version": "#88-Ubuntu SMP Wed Mar 8 16:34:45 UTC 2017",
+            "python_full_version": "2.7.12",
             "python_version": "2.7",
-            "sys_platform": "darwin"
+            "sys_platform": "linux2"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -41,17 +41,23 @@
                 "sha256:2d81cbbe0e73112bdfe6ef8576f2238f2ba27dd0d55752a776c41d38b7da2850"
             ],
             "version": "==1.1.6"
+        },
+        "six": {
+            "hashes": [
+                "sha256:832dc0e10feb1aa2c68dcc57dbb658f1c7e65b9b61af69048abc87a2db00a0eb",
+                "sha256:70e8a77beed4562e7f14fe23a786b54f6296e34344c23bc42f07b15018ff98e9"
+            ],
+            "version": "==1.11.0"
+        },
+        "websocket-client": {
+            "hashes": [
+                "sha256:7a40abbd2534c91e667ca6507ccbb30d96816361840ef424dff49b24956fcdae",
+                "sha256:933f6bbf08b381f2adbca9e93d7e7958ba212b42c73acb310b18f0fbe74f3738"
+            ],
+            "version": "==0.46.0"
         }
     },
     "develop": {
-        "appnope": {
-            "hashes": [
-                "sha256:5b26757dc6f79a3b7dc9fab95359328d5747fcb2409d331ea66d0272b90ab2a0",
-                "sha256:8b995ffe925347a2138d7ac0fe77155e4311a0ea6d6da4f5128fe4b3cbe5ed71"
-            ],
-            "markers": "sys_platform == 'darwin'",
-            "version": "==0.1.0"
-        },
         "backports.shutil-get-terminal-size": {
             "hashes": [
                 "sha256:0975ba55054c15e346944b38956a4c9cbee9009391e41b86c68990effb8c1f64",

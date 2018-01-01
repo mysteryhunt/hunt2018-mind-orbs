@@ -64,7 +64,7 @@ class SceneManager(Thread):
         self._dotstar_strip.begin()
 
     def push_scene(self, new_scene, fadetime):
-        if isinstance(new_scene, str):
+        if isinstance(new_scene, basestring):
             try:
                 new_scene = getattr(scenes.AllScenes, new_scene).value
             except AttributeError:
