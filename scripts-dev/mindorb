@@ -2,6 +2,26 @@
 
 set -euf -o pipefail
 
-export MIND_ORB_WEBSOCKET_URL="ws://127.0.0.1:8080/ws"
-export MIND_ORB_DEVICE_ID="dev"
-pipenv run python -m mindorb.app
+readonly LOCAL_ADDR_PORT="127.0.0.1:8080"
+readonly LOCAL_WS_URL="ws://${LOCAL_ADDR_PORT}/ws"
+
+readonly SHARED_WS_URL="wss://orb-control.head-hunters.org/ws"
+
+main() {
+    if curl "http://${LOCAL_ADDR_PORT}" &> /dev/null; then
+        # Local server is running -> use it
+        echo "Found local dev C&C server!"
+        export MIND_ORB_WEBSOCKET_URL="${LOCAL_WS_URL}"
+    else
+        # No local server -> use shared dev server
+        export MIND_ORB_WEBSOCKET_URL="${SHARED_WS_URL}"
+    fi
+    export MIND_ORB_DEVICE_ID="$(whoami)"
+
+    echo "Using MIND_ORB_WEBSOCKET_URL='${MIND_ORB_WEBSOCKET_URL}'"
+    echo "Using MIND_ORB_DEVICE_ID='${MIND_ORB_DEVICE_ID}'"
+
+    pipenv run python -m mindorb.app
+}
+
+main
