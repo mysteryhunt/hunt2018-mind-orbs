@@ -44,7 +44,7 @@ class SceneManager(Thread):
         spi_dev=SpiDevice.primary, spi_freq=12000000, led_order='bgr'
     ):
         super(SceneManager, self).__init__(name="scene-manager")
-        self.shutdown = False
+        self.shutting_down = False
 
         self.num_pixels = num_pixels
         self.ledbuffer = LedBuffer(num_pixels)
@@ -63,8 +63,11 @@ class SceneManager(Thread):
 
         self._dotstar_strip.begin()
 
+    def shutdown(self):
+        self.shutting_down = True
+
     def push_scene(self, new_scene, fadetime):
-        if isinstance(new_scene, str):
+        if isinstance(new_scene, basestring):
             try:
                 new_scene = getattr(scenes.AllScenes, new_scene).value
             except AttributeError:
@@ -81,7 +84,7 @@ class SceneManager(Thread):
 
     def run(self):
         print("Running SceneManager...")
-        while not self.shutdown:
+        while not self.shutting_down:
             frame_timestamp = time.time()
             self.scene.loop(frame_timestamp)
             self._run_leds(frame_timestamp)

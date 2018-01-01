@@ -24,6 +24,7 @@ DotStar-Emulator = {version = "*", markers = "platform_machine == 'x86_64'"}
 [packages]
 
 enum34 = "*"
+websocket-client = "*"
 
 # DotStar -> use Adafruit lib on ARM platforms
 # Resin.io build servers == 'armv8l' / Pi == 'armv6l'
