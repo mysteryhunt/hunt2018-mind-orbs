@@ -1,6 +1,9 @@
 # base-image for python on any machine using a template variable,
 # see more about dockerfile templates here:http://docs.resin.io/pages/deployment/docker-templates
-FROM resin/%%RESIN_MACHINE_NAME%%-python
+# Abstract dependency:
+# FROM resin/%%RESIN_MACHINE_NAME%%-python:2.7
+# Locked dependency:
+FROM resin/%%RESIN_MACHINE_NAME%%-python:2.7.13
 
 # Update packages
 RUN apt-get update
@@ -11,7 +14,10 @@ RUN apt-get install -yq libraspberrypi-dev
 RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Use pipenv for Python dependency management
-RUN pip install pipenv~=9.0
+# Abstract dependency:
+# RUN pip install pipenv~=9.0
+# Locked dependency:
+RUN pip install pipenv==9.0.1
 
 # Set our working directory
 WORKDIR /usr/src/app
