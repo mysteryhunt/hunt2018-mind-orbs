@@ -7,7 +7,7 @@ readonly CONFIG_DIR="${SCRIPT_DIR}/dotstar-emulator-config"
 
 main() {
     pushd "${CONFIG_DIR}"
-    python -m DotStar_Emulator run
+    pipenv run python -m DotStar_Emulator run
     popd
 }
 
