@@ -23,8 +23,8 @@ COPY Pipfile.lock Pipfile.lock
 # Copy vendored libraries before pip install
 COPY vendor vendor
 
-# Install locked Python dependencies from pipenv
-RUN pipenv install
+# Install locked Python dependencies from pipenv into system pip
+RUN pipenv install --deploy --system
 
 # Copy app files
 COPY scripts scripts
