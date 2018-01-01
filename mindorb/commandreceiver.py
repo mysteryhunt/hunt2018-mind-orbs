@@ -4,7 +4,6 @@ from __future__ import division, absolute_import, print_function
 
 import json
 import logging
-import time
 from threading import Thread
 
 import websocket

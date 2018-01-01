@@ -2,4 +2,6 @@
 
 set -euf -o pipefail
 
+export MIND_ORB_WEBSOCKET_URL="ws://127.0.0.1:8080/ws"
+export MIND_ORB_DEVICE_ID="dev"
 pipenv run python -m mindorb.app
