@@ -17,7 +17,7 @@ threads = []
 def shutdown(signum, _):
     print("Signal {} received! -> sending shutdown...".format(signum))
     for t in threads:
-        t.shutdown = True
+        t.shutdown()
 
 
 def main():
