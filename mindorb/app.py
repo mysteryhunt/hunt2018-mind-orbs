@@ -9,7 +9,9 @@ import sys
 
 from mindorb.commandreceiver import CommandReceiver
 from mindorb.scenecontrol import SceneManager
+from mindorb.scenes import get_scene
 
+DEFAULT_LED_STRIP_LEN = 41  # 24 (ring) + 4 * 4 (wedges) + 1 (up)
 
 threads = []
 
@@ -23,12 +25,14 @@ def shutdown(signum, _):
 def main():
     try:
         websocket_url = os.environ['MIND_ORB_WEBSOCKET_URL']
+        print("Using MIND_ORB_WEBSOCKET_URL='{}'".format(websocket_url))
     except KeyError:
         print('Missing environment variable: MIND_ORB_WEBSOCKET_URL',
               file=sys.stderr)
         sys.exit(1)
     try:
         device_id = os.environ['MIND_ORB_DEVICE_ID']
+        print("Using MIND_ORB_DEVICE_ID='{}'".format(device_id))
     except KeyError:
         print('Missing environment variable: MIND_ORB_DEVICE_ID',
               file=sys.stderr)
@@ -37,7 +41,10 @@ def main():
     signal.signal(signal.SIGINT, shutdown)
     signal.signal(signal.SIGTERM, shutdown)
 
-    scene_manager = SceneManager(20)
+    scene_manager = SceneManager(
+        int(os.environ.get('MIND_ORB_LED_STRIP_LEN', DEFAULT_LED_STRIP_LEN)),
+        default_scene=get_scene(os.environ.get('MIND_ORB_DEFAULT_SCENE'))
+    )
     threads.append(scene_manager)
     command_rcvr = CommandReceiver(scene_manager, websocket_url, device_id)
     threads.append(command_rcvr)
