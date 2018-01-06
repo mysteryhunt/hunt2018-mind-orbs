@@ -25,12 +25,14 @@ def shutdown(signum, _):
 def main():
     try:
         websocket_url = os.environ['MIND_ORB_WEBSOCKET_URL']
+        print("Using MIND_ORB_WEBSOCKET_URL='{}'".format(websocket_url))
     except KeyError:
         print('Missing environment variable: MIND_ORB_WEBSOCKET_URL',
               file=sys.stderr)
         sys.exit(1)
     try:
         device_id = os.environ['MIND_ORB_DEVICE_ID']
+        print("Using MIND_ORB_DEVICE_ID='{}'".format(device_id))
     except KeyError:
         print('Missing environment variable: MIND_ORB_DEVICE_ID',
               file=sys.stderr)
