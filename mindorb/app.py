@@ -9,7 +9,9 @@ import sys
 
 from mindorb.commandreceiver import CommandReceiver
 from mindorb.scenecontrol import SceneManager
+from mindorb.scenes import get_scene
 
+DEFAULT_LED_STRIP_LEN = 41  # 24 (ring) + 4 * 4 (wedges) + 1 (up)
 
 threads = []
 
@@ -37,7 +39,10 @@ def main():
     signal.signal(signal.SIGINT, shutdown)
     signal.signal(signal.SIGTERM, shutdown)
 
-    scene_manager = SceneManager(20)
+    scene_manager = SceneManager(
+        int(os.environ.get('MIND_ORB_LED_STRIP_LEN', DEFAULT_LED_STRIP_LEN)),
+        default_scene=get_scene(os.environ.get('MIND_ORB_DEFAULT_SCENE'))
+    )
     threads.append(scene_manager)
     command_rcvr = CommandReceiver(scene_manager, websocket_url, device_id)
     threads.append(command_rcvr)

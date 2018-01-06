@@ -15,6 +15,7 @@ else:
     from DotStar_Emulator import Adafruit_DotStar
 
 from mindorb import scenes
+from mindorb.scenes import get_scene
 from mindorb.scenetypes import LedColor
 
 
@@ -40,7 +41,7 @@ class LedBuffer(object):
 class SceneManager(Thread):
     def __init__(
         self, num_pixels,
-        default_scene=scenes.SolidBlack,
+        default_scene=None,
         spi_dev=SpiDevice.primary, spi_freq=12000000, led_order='bgr'
     ):
         super(SceneManager, self).__init__(name="scene-manager")
@@ -48,6 +49,7 @@ class SceneManager(Thread):
 
         self.num_pixels = num_pixels
         self.ledbuffer = LedBuffer(num_pixels)
+        print("SceneManager using {} pixels".format(num_pixels))
 
         self._scene_queue = collections.deque()  # TODO: maybe bound this?
         self.scene = None
@@ -67,13 +69,7 @@ class SceneManager(Thread):
         self.shutting_down = True
 
     def push_scene(self, new_scene, fadetime):
-        if isinstance(new_scene, basestring):
-            try:
-                new_scene = getattr(scenes.AllScenes, new_scene).value
-            except AttributeError:
-                raise ValueError(
-                    "`new_scene` '{}' not found!".format(new_scene)
-                )
+        new_scene = get_scene(new_scene)
 
         print("Queueing scene change: new_scene={}, fadetime={}".format(
             new_scene, fadetime

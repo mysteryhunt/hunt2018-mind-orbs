@@ -3,15 +3,31 @@
 from __future__ import division, absolute_import, print_function
 
 from enum import Enum
+import inspect
 
-from .solidcolor import SolidBlack
-from .solidcolor import SolidRed
-from .solidcolor import SolidGreen
-from .solidcolor import SolidBlue
+from mindorb.scenetypes import SceneBase
+
+from . import solidcolor
+
+
+def get_scene(scene):
+    if scene is None:
+        return solidcolor.SolidBlack
+    elif inspect.isclass(scene) and issubclass(scene, SceneBase):
+        return scene
+    elif isinstance(scene, AllScenes):
+        return scene.value
+    elif isinstance(scene, basestring):
+        try:
+            return getattr(AllScenes, scene).value
+        except AttributeError:
+            raise ValueError("`scene` '{}' not found!".format(scene))
+    else:
+        raise TypeError("Cannot convert to scene from: `{}`".format(scene))
 
 
 class AllScenes(Enum):
-    SolidBlack = SolidBlack
-    SolidRed = SolidRed
-    SolidGreen = SolidGreen
-    SolidBlue = SolidBlue
+    SolidBlack = solidcolor.SolidBlack
+    SolidRed = solidcolor.SolidRed
+    SolidGreen = solidcolor.SolidGreen
+    SolidBlue = solidcolor.SolidBlue

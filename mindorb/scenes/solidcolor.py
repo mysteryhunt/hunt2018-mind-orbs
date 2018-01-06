@@ -3,9 +3,10 @@
 from __future__ import division, absolute_import, print_function
 
 from mindorb.scenetypes import LedColor
+from mindorb.scenetypes import SceneBase
 
 
-class SolidColorBase(object):
+class SolidColorBase(SceneBase):
     def __init__(self, ledbuffer, fadetime, color):
         self._ledbuffer = ledbuffer
         self._fadetime = fadetime
