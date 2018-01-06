@@ -8,6 +8,7 @@ import inspect
 from mindorb.scenetypes import SceneBase
 
 from . import solidcolor
+from . import test
 
 
 def get_scene(scene):
@@ -31,3 +32,4 @@ class AllScenes(Enum):
     SolidRed = solidcolor.SolidRed
     SolidGreen = solidcolor.SolidGreen
     SolidBlue = solidcolor.SolidBlue
+    TestStripChase = test.TestStripChase
