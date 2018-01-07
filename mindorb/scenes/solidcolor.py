@@ -8,8 +8,7 @@ from mindorb.scenetypes import SceneBase
 
 class SolidColorBase(SceneBase):
     def __init__(self, ledbuffer, fadetime, color):
-        self._ledbuffer = ledbuffer
-        self._fadetime = fadetime
+        super(SolidColorBase, self).__init__(ledbuffer, fadetime)
         self.color = color
 
     def loop(self, frame_timestamp):
@@ -35,9 +34,11 @@ class SolidBlue(SolidColorBase):
     def __init__(self, ledbuffer, fadetime):
         super(SolidBlue, self).__init__(ledbuffer, fadetime, LedColor.blue)
 
+
 class SolidYellow(SolidColorBase):
     def __init__(self, ledbuffer, fadetime):
         super(SolidYellow, self).__init__(ledbuffer, fadetime, LedColor.yellow)
+
 
 class SolidPurple(SolidColorBase):
     def __init__(self, ledbuffer, fadetime):

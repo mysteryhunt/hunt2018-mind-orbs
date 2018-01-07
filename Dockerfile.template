@@ -8,7 +8,11 @@ FROM resin/%%RESIN_MACHINE_NAME%%-python:2.7.13
 # Update packages
 RUN apt-get update
 # Install headers needed for Adafruit_DotStar_Pi
-RUN apt-get install -yq libraspberrypi-dev
+RUN apt-get install -yq \
+    libraspberrypi-dev \
+    libraspberrypi0 \
+    omxplayer \
+    python-dbus
 # Clean up unneeded apt files
 # (Comment this out if installing packages manually for dev purposes)
 RUN apt-get clean && rm -rf /var/lib/apt/lists/*

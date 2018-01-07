@@ -7,6 +7,7 @@ import inspect
 
 from mindorb.scenetypes import SceneBase
 
+from . import interactions
 from . import solidcolor
 from . import test
 
@@ -28,6 +29,10 @@ def get_scene(scene):
 
 
 class AllScenes(Enum):
+    InteractionGames = interactions.InteractionGames
+    InteractionHacking = interactions.InteractionHacking
+    InteractionPokemon = interactions.InteractionPokemon
+    InteractionScifi = interactions.InteractionScifi
     SolidBlack = solidcolor.SolidBlack
     SolidRed = solidcolor.SolidRed
     SolidGreen = solidcolor.SolidGreen

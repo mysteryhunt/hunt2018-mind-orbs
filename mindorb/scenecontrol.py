@@ -4,10 +4,15 @@ from __future__ import division, absolute_import, print_function
 
 import collections
 from enum import Enum
+import hashlib
 from itertools import repeat
+import json
 import os
+import signal
+import subprocess
 import time
 from threading import Thread
+import urllib
 
 if os.getenv('RESIN'):
     from dotstar import Adafruit_DotStar
@@ -17,6 +22,9 @@ else:
 from mindorb import scenes
 from mindorb.scenes import get_scene
 from mindorb.scenetypes import LedColor
+
+
+ORB_VIDEO_DIR = "/data/orb-video" if os.getenv('RESIN') else "/tmp/orb-video"
 
 
 class SpiDevice(Enum):
@@ -38,11 +46,91 @@ class LedBuffer(object):
             self.leds[idx] = color
 
 
+class ProjectorControl(object):
+    def __init__(self, video_manifest_url):
+        self.video_manifest_url = video_manifest_url
+        self.video_manifest = None
+        self._player_proc = None
+        self.video_name = None
+
+        self._sync_all_videos()
+
+    def _sync_all_videos(self):
+        if not os.path.exists(ORB_VIDEO_DIR):
+            os.makedirs(ORB_VIDEO_DIR)
+
+        if self.video_manifest_url is None:
+            print("No `video_manifest_url` specified -> skipping fetch")
+            return
+
+        local_manifest_file = os.path.join(ORB_VIDEO_DIR, "manifest.json")
+        urllib.urlretrieve(self.video_manifest_url, local_manifest_file)
+        self.video_manifest = json.load(open(local_manifest_file, 'r'))
+
+        for name, info in self.video_manifest['videos'].iteritems():
+            self._sync_video(name, info['url'], info['sha1'])
+
+    def _sync_video(self, name, url, sha1):
+        video_file = os.path.join(ORB_VIDEO_DIR, "{}.mp4".format(name))
+
+        if os.path.exists(video_file):
+            local_sha1 = hashlib.sha1()
+            with open(video_file, 'rb') as f:
+                # Do the hash in chunks to not use as much memory
+                chunk = f.read(2**16)
+                while len(chunk) != 0:
+                    local_sha1.update(chunk)
+                    chunk = f.read(2**16)
+
+            if local_sha1.hexdigest() == sha1:
+                print("Video up to date, skipping download: {}".format(
+                    video_file))
+                return
+
+        print("Fetching video: {} -> {}".format(url, video_file))
+        # TODO: check the SHA1 and only download if needed
+        urllib.urlretrieve(url, video_file)
+
+    def start(self, video_name):
+        if self.video_name == video_name:
+            return
+
+        self.stop()
+        print("Starting video: {}".format(video_name))
+        video_file = os.path.join(ORB_VIDEO_DIR, "{}.mp4".format(video_name))
+
+        if os.getenv('RESIN'):
+            self._player_proc = subprocess.Popen(
+                ["omxplayer",
+                    "-n", "-1", "--no-osd", "--aspect-mode", "fill", "--loop",
+                    video_file],
+                stdin=subprocess.PIPE, stdout=open(os.devnull, 'wb'),
+                # Assign a new process group so the child process can be killed
+                preexec_fn=os.setsid)
+        else:
+            print("Not on a Pi, would open video: {}".format(video_file))
+
+        self.video_name = video_name
+
+    def stop(self):
+        print("Stopping video: {}".format(self.video_name))
+        self.video_name = None
+
+        if self._player_proc is None:
+            return
+
+        # We need to kill the whole group because the `omxplayer` command
+        # spawns a child process that doesn't get the normal `Popen.kill()`
+        # signal.
+        os.killpg(os.getpgid(self._player_proc.pid), signal.SIGTERM)
+
+
 class SceneManager(Thread):
     def __init__(
         self, num_pixels,
         default_scene=None,
-        spi_dev=SpiDevice.primary, spi_freq=1000000, led_order='bgr'
+        spi_dev=SpiDevice.primary, spi_freq=1000000, led_order='bgr',
+        video_manifest_url=None
     ):
         super(SceneManager, self).__init__(name="scene-manager")
         self.shutting_down = False
@@ -50,6 +138,8 @@ class SceneManager(Thread):
         self.num_pixels = num_pixels
         self.ledbuffer = LedBuffer(num_pixels)
         print("SceneManager using {} pixels".format(num_pixels))
+
+        self.projector = ProjectorControl(video_manifest_url)
 
         self._scene_queue = collections.deque()  # TODO: maybe bound this?
         self.scene = None
@@ -128,8 +218,11 @@ class SceneManager(Thread):
         self._dotstar_strip.show()
 
     def _run_projector(self, frame_timestamp):
-        # TODO: implement
-        pass
+        if self.scene.video_name is None and \
+                self.projector.video_name is not None:
+            self.projector.stop()
+        elif self.scene.video_name != self.projector.video_name:
+            self.projector.start(self.scene.video_name)
 
     def _cleanup(self):
         print("Cleaning up SceneManager...")

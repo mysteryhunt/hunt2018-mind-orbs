@@ -7,9 +7,7 @@ from mindorb.scenetypes import SceneBase
 
 class TestStripChase(SceneBase):
     def __init__(self, ledbuffer, fadetime):
-        self._ledbuffer = ledbuffer
-        self._fadetime = fadetime
-
+        super(TestStripChase, self).__init__(ledbuffer, fadetime)
         self.numpixels = len(self._ledbuffer.leds)
 
         self.head = 0  # Index of first 'on' pixel
