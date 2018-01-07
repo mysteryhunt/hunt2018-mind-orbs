@@ -8,6 +8,8 @@ from mindorb.scenetypes import SceneBase
 
 class SolidColorBase(SceneBase):
     def __init__(self, ledbuffer, fadetime, color):
+        super(SolidColorBase, self).__init__(ledbuffer, fadetime)
+
         self._ledbuffer = ledbuffer
         self._fadetime = fadetime
         self.color = color

@@ -6,6 +6,8 @@ import collections
 from enum import Enum
 from itertools import repeat
 import os
+import signal
+import subprocess
 import time
 from threading import Thread
 
@@ -17,6 +19,9 @@ else:
 from mindorb import scenes
 from mindorb.scenes import get_scene
 from mindorb.scenetypes import LedColor
+
+
+ORB_VIDEO_DIR = "/data/orb-video"
 
 
 class SpiDevice(Enum):
@@ -38,6 +43,45 @@ class LedBuffer(object):
             self.leds[idx] = color
 
 
+class ProjectorControl(object):
+    def __init__(self):
+        self._player_proc = None
+        self.video_name = None
+
+    def start(self, video_name):
+        if self.video_name == video_name:
+            return
+
+        self.stop()
+        print("Starting video: {}".format(video_name))
+        video_file = os.path.join(ORB_VIDEO_DIR, "{}.mp4".format(video_name))
+
+        if os.getenv("RESIN"):
+            self._player_proc = subprocess.Popen(
+                ["omxplayer",
+                    "-n", "-1", "--no-osd", "--aspect-mode", "fill", "--loop",
+                    video_file],
+                stdin=subprocess.PIPE, stdout=open(os.devnull, 'wb'),
+                # Assign a new process group so the child process can be killed
+                preexec_fn=os.setsid)
+        else:
+            print("Not on a Pi, would open video: {}".format(video_file))
+
+        self.video_name = video_name
+
+    def stop(self):
+        print("Stopping video: {}".format(self.video_name))
+        self.video_name = None
+
+        if self._player_proc is None:
+            return
+
+        # We need to kill the whole group because the `omxplayer` command
+        # spawns a child process that doesn't get the normal `Popen.kill()`
+        # signal.
+        os.killpg(os.getpgid(self._player_proc.pid), signal.SIGTERM)
+
+
 class SceneManager(Thread):
     def __init__(
         self, num_pixels,
@@ -50,6 +94,8 @@ class SceneManager(Thread):
         self.num_pixels = num_pixels
         self.ledbuffer = LedBuffer(num_pixels)
         print("SceneManager using {} pixels".format(num_pixels))
+
+        self.projector = ProjectorControl()
 
         self._scene_queue = collections.deque()  # TODO: maybe bound this?
         self.scene = None
@@ -128,8 +174,11 @@ class SceneManager(Thread):
         self._dotstar_strip.show()
 
     def _run_projector(self, frame_timestamp):
-        # TODO: implement
-        pass
+        if self.scene.video_name is None and \
+                self.projector.video_name is not None:
+            self.projector.stop()
+        elif self.scene.video_name != self.projector.video_name:
+            self.projector.start(self.scene.video_name)
 
     def _cleanup(self):
         print("Cleaning up SceneManager...")

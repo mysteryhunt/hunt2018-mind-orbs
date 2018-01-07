@@ -13,4 +13,5 @@ class LedColor(Enum):
 
 
 class SceneBase(object):
-    pass
+    def __init__(self, ledbuffer, fadetime):
+        self.video_name = None
