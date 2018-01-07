@@ -21,7 +21,7 @@ from mindorb.scenes import get_scene
 from mindorb.scenetypes import LedColor
 
 
-ORB_VIDEO_DIR = "/data/orb-video"
+ORB_VIDEO_DIR = "/data/orb-video" if os.getenv('RESIN') else "/tmp/orb-video"
 
 
 class SpiDevice(Enum):
@@ -48,6 +48,8 @@ class ProjectorControl(object):
         self._player_proc = None
         self.video_name = None
 
+        os.makedirs(ORB_VIDEO_DIR)
+
     def start(self, video_name):
         if self.video_name == video_name:
             return
@@ -56,7 +58,7 @@ class ProjectorControl(object):
         print("Starting video: {}".format(video_name))
         video_file = os.path.join(ORB_VIDEO_DIR, "{}.mp4".format(video_name))
 
-        if os.getenv("RESIN"):
+        if os.getenv('RESIN'):
             self._player_proc = subprocess.Popen(
                 ["omxplayer",
                     "-n", "-1", "--no-osd", "--aspect-mode", "fill", "--loop",
