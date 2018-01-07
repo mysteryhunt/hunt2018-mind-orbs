@@ -12,8 +12,6 @@ python_version = '2.7'
 
 [dev-packages]
 
-ipython = "*"
-
 # DotStar -> use emulator on x86 platforms (dev environments)
 # CAUTION: the markers spec doesn't work when in the main [packages] section
 # because it doesn't mark DotStar-Emulator's dependencies with the platform
@@ -24,6 +22,7 @@ DotStar-Emulator = {version = "*", markers = "platform_machine == 'x86_64'"}
 [packages]
 
 enum34 = "*"
+ipython = "*"
 websocket-client = "*"
 
 # DotStar -> use Adafruit lib on ARM platforms
