@@ -32,4 +32,6 @@ class AllScenes(Enum):
     SolidRed = solidcolor.SolidRed
     SolidGreen = solidcolor.SolidGreen
     SolidBlue = solidcolor.SolidBlue
+    SolidYellow = solidcolor.SolidYellow
+    SolidPurple = solidcolor.SolidPurple
     TestStripChase = test.TestStripChase
