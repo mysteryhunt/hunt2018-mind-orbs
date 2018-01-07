@@ -42,7 +42,7 @@ class SceneManager(Thread):
     def __init__(
         self, num_pixels,
         default_scene=None,
-        spi_dev=SpiDevice.primary, spi_freq=12000000, led_order='bgr'
+        spi_dev=SpiDevice.primary, spi_freq=1000000, led_order='bgr'
     ):
         super(SceneManager, self).__init__(name="scene-manager")
         self.shutting_down = False
