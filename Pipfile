@@ -23,7 +23,6 @@ DotStar-Emulator = {version = "*", markers = "platform_machine == 'x86_64'"}
 
 enum34 = "*"
 ipython = "*"
-requests = "*"
 websocket-client = "*"
 
 # DotStar -> use Adafruit lib on ARM platforms
