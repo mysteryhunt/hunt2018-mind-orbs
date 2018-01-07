@@ -43,7 +43,8 @@ def main():
 
     scene_manager = SceneManager(
         int(os.environ.get('MIND_ORB_LED_STRIP_LEN', DEFAULT_LED_STRIP_LEN)),
-        default_scene=get_scene(os.environ.get('MIND_ORB_DEFAULT_SCENE'))
+        default_scene=get_scene(os.environ.get('MIND_ORB_DEFAULT_SCENE')),
+        video_manifest_url=os.environ.get('MIND_ORB_VIDEO_MANIFEST_URL')
     )
     threads.append(scene_manager)
     command_rcvr = CommandReceiver(scene_manager, websocket_url, device_id)

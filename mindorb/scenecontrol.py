@@ -5,11 +5,13 @@ from __future__ import division, absolute_import, print_function
 import collections
 from enum import Enum
 from itertools import repeat
+import json
 import os
 import signal
 import subprocess
 import time
 from threading import Thread
+import urllib
 
 if os.getenv('RESIN'):
     from dotstar import Adafruit_DotStar
@@ -44,11 +46,34 @@ class LedBuffer(object):
 
 
 class ProjectorControl(object):
-    def __init__(self):
+    def __init__(self, video_manifest_url):
+        self.video_manifest_url = video_manifest_url
+        self.video_manifest = None
         self._player_proc = None
         self.video_name = None
 
-        os.makedirs(ORB_VIDEO_DIR)
+        self._sync_all_videos()
+
+    def _sync_all_videos(self):
+        if not os.path.exists(ORB_VIDEO_DIR):
+            os.makedirs(ORB_VIDEO_DIR)
+
+        if self.video_manifest_url is None:
+            print("No `video_manifest_url` specified -> skipping fetch")
+            return
+
+        local_manifest_file = os.path.join(ORB_VIDEO_DIR, "manifest.json")
+        urllib.urlretrieve(self.video_manifest_url, local_manifest_file)
+        self.video_manifest = json.load(open(local_manifest_file, 'r'))
+
+        for name, info in self.video_manifest['videos'].iteritems():
+            self._sync_video(name, info['url'], info['sha1'])
+
+    def _sync_video(self, name, url, sha1):
+        video_file = os.path.join(ORB_VIDEO_DIR, "{}.mp4".format(name))
+        print("Fetching video: {} -> {}".format(url, video_file))
+        # TODO: check the SHA1 and only download if needed
+        urllib.urlretrieve(url, video_file)
 
     def start(self, video_name):
         if self.video_name == video_name:
@@ -88,7 +113,8 @@ class SceneManager(Thread):
     def __init__(
         self, num_pixels,
         default_scene=None,
-        spi_dev=SpiDevice.primary, spi_freq=1000000, led_order='bgr'
+        spi_dev=SpiDevice.primary, spi_freq=1000000, led_order='bgr',
+        video_manifest_url=None
     ):
         super(SceneManager, self).__init__(name="scene-manager")
         self.shutting_down = False
@@ -97,7 +123,7 @@ class SceneManager(Thread):
         self.ledbuffer = LedBuffer(num_pixels)
         print("SceneManager using {} pixels".format(num_pixels))
 
-        self.projector = ProjectorControl()
+        self.projector = ProjectorControl(video_manifest_url)
 
         self._scene_queue = collections.deque()  # TODO: maybe bound this?
         self.scene = None
