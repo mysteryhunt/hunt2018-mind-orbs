@@ -4,6 +4,7 @@ from __future__ import division, absolute_import, print_function
 
 import collections
 from enum import Enum
+import hashlib
 from itertools import repeat
 import json
 import os
@@ -71,6 +72,21 @@ class ProjectorControl(object):
 
     def _sync_video(self, name, url, sha1):
         video_file = os.path.join(ORB_VIDEO_DIR, "{}.mp4".format(name))
+
+        if os.path.exists(video_file):
+            local_sha1 = hashlib.sha1()
+            with open(video_file, 'rb') as f:
+                # Do the hash in chunks to not use as much memory
+                chunk = f.read(2**16)
+                while len(chunk) != 0:
+                    local_sha1.update(chunk)
+                    chunk = f.read(2**16)
+
+            if local_sha1.hexdigest() == sha1:
+                print("Video up to date, skipping download: {}".format(
+                    video_file))
+                return
+
         print("Fetching video: {} -> {}".format(url, video_file))
         # TODO: check the SHA1 and only download if needed
         urllib.urlretrieve(url, video_file)
