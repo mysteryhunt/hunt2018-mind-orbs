@@ -7,6 +7,7 @@ from mindorb.scenetypes import SceneBase
 
 class TestStripChase(SceneBase):
     def __init__(self, ledbuffer, fadetime):
+        super(TestStripChase, self).__init__(ledbuffer, fadetime)
         self._ledbuffer = ledbuffer
         self._fadetime = fadetime
 

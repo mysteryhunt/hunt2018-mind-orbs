@@ -26,13 +26,16 @@ class SolidBlack(SolidColorBase):
 class SolidRed(SolidColorBase):
     def __init__(self, ledbuffer, fadetime):
         super(SolidRed, self).__init__(ledbuffer, fadetime, LedColor.red)
+        self.video_name = "games"
 
 
 class SolidGreen(SolidColorBase):
     def __init__(self, ledbuffer, fadetime):
         super(SolidGreen, self).__init__(ledbuffer, fadetime, LedColor.green)
+        self.video_name = "hacking"
 
 
 class SolidBlue(SolidColorBase):
     def __init__(self, ledbuffer, fadetime):
         super(SolidBlue, self).__init__(ledbuffer, fadetime, LedColor.blue)
+        self.video_name = "sci-fi"
