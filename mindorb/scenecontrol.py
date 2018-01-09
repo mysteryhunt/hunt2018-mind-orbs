@@ -190,7 +190,7 @@ class SceneManager(Thread):
             pass
 
     def _set_scene(self, new_scene, fadetime):
-        if self.scene.__class__ is new_scene.__class__:
+        if self.scene.__class__ is new_scene:
             # Make this a no-op if the scene has not changed
             print("Ignoring scene change: old={}, new={}".format(
                 self.scene, new_scene
