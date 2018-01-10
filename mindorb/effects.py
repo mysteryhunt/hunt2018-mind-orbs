@@ -20,6 +20,9 @@ def breathe(ts, color, amp=0.60, period=5.0, phase=0.0):
     Returns:
         TYPE: Description
     """
+
+    # Equations taken from:
+    # http://sean.voisen.org/blog/2011/10/breathing-led-with-arduino/
     t = 2 * pi * (ts - phase) / period
 
     return tuple(int(

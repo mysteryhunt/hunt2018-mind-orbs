@@ -3,6 +3,7 @@
 from __future__ import division, absolute_import, print_function
 
 from collections import namedtuple
+from itertools import chain
 
 from mindorb.scenetypes import LedColor
 
@@ -24,15 +25,9 @@ class MemoryRackOrb(object):
         self.orb = orb
         self.leds = leds
         self.led_ids = led_ids
+        self.colors = None
 
-    def set_color(self, color):
-        if isinstance(color, LedColor):
-            color = color.value
-
-        for led in self.led_ids:
-            self.leds[led] = color
-
-    def set_dual_color(self, color_a, color_b):
+    def set_colors(self, color_a, color_b):
         if isinstance(color_a, LedColor):
             color_a = color_a.value
         if isinstance(color_b, LedColor):
@@ -42,6 +37,8 @@ class MemoryRackOrb(object):
             self.leds[a_led] = color_a
         for b_led in self.led_ids[len(self.led_ids) // 2:]:
             self.leds[b_led] = color_b
+
+        self.colors = (color_a, color_b)
 
 
 class MemoryRackMapping(object):
@@ -58,9 +55,9 @@ class MemoryRackMapping(object):
     def __init__(self, leds):
         self.leds = leds
 
-        self.shelf_section_orb_map = self._get_shelf_section_orb_map()
+        self.shelf_section_orb_map, self.all_orbs = self._get_orb_mappings()
 
-    def _get_shelf_section_orb_map(self):
+    def _get_orb_mappings(self):
         # For now: do the simplistic thing and evenly cut up each section
         # Shove orbs to the right
         # Assume: 7 orbs will fit in each secion (40" / 14cm -> 7.25)
@@ -115,4 +112,6 @@ class MemoryRackMapping(object):
         # Here is where you'd go adjust the individual LED indices for
         # particular orbs if necessary.
 
-        return shelf_sec_orb
+        all_orbs = list(
+            chain.from_iterable(chain.from_iterable(shelf_sec_orb)))
+        return shelf_sec_orb, all_orbs
