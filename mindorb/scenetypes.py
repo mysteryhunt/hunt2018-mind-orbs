@@ -3,6 +3,7 @@
 from __future__ import division, absolute_import, print_function
 
 from enum import Enum
+from itertools import combinations, combinations_with_replacement
 
 
 class LedColor(Enum):
@@ -21,6 +22,10 @@ EMOTION_COLORS = {
     LedColor.yellow,
     LedColor.purple
 }
+
+DUAL_COLORS = set(combinations(EMOTION_COLORS, 2))
+
+DUAL_COLOR_WITH_SOLIDS = set(combinations_with_replacement(EMOTION_COLORS, 2))
 
 
 class SceneBase(object):

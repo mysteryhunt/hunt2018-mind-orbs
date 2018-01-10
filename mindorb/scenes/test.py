@@ -4,7 +4,7 @@ from __future__ import division, absolute_import, print_function
 
 import random
 
-from mindorb.scenetypes import EMOTION_COLORS, SceneBase
+from mindorb.scenetypes import DUAL_COLOR_WITH_SOLIDS, SceneBase
 
 
 class TestStripChase(SceneBase):
@@ -44,13 +44,13 @@ class TestMemoryRackRandom(SceneBase):
         super(TestMemoryRackRandom, self).__init__(ledbuffer, fadetime)
         self._orbs = self._ledbuffer.mapping.shelf_section_orb_map
         self._last_change = 0
-        # from IPython import embed; embed()
 
     def loop(self, frame_timestamp):
         if frame_timestamp - self._last_change > self.CHANGE_PERIOD:
             for shelf in self._orbs:
                 for section in shelf:
                     for orb in section:
-                        orb.set_color(random.choice(tuple(EMOTION_COLORS)))
+                        orb.set_dual_color(*random.choice(tuple(
+                            DUAL_COLOR_WITH_SOLIDS)))
 
             self._last_change = frame_timestamp

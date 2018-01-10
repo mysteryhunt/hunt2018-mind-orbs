@@ -24,6 +24,18 @@ class MemoryRackOrb(object):
         for led in self.led_ids:
             self.leds[led] = color
 
+    def set_dual_color(self, color_a, color_b):
+        if isinstance(color_a, LedColor):
+            color_a = color_a.value
+        if isinstance(color_b, LedColor):
+            color_b = color_b.value
+
+        for a_led in self.led_ids[:len(self.led_ids) // 2]:
+            self.leds[a_led] = color_a
+        for b_led in self.led_ids[len(self.led_ids) // 2:]:
+            self.leds[b_led] = color_b
+
+
 
 class MemoryRackMapping(object):
     """Maps the logical concept of orbs in a 2-dimension plane -> LED strips
@@ -90,5 +102,9 @@ class MemoryRackMapping(object):
                     orbs.append(orb)
                 sections.append(orbs)
             shelf_sec_orb.append(sections)
+
+        # At this point: the base map has been created
+        # Here is where you'd go adjust the individual LED indices for
+        # particular orbs if necessary.
 
         return shelf_sec_orb

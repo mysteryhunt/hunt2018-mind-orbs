@@ -9,7 +9,8 @@ from itertools import repeat
 #
 # Ratio should be approximately in the ratio: (3, 0.84)
 # This corresponds to an approximation of the actual Memory Rack dimensions
-_WINDOW_WIDTH = 2500
+# _WINDOW_WIDTH = 2500
+_WINDOW_WIDTH = 1920
 WINDOW_SIZE = (_WINDOW_WIDTH, int(_WINDOW_WIDTH / 3 * 0.84))
 
 ###############################################################################
