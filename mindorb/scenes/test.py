@@ -3,7 +3,6 @@
 from __future__ import division, absolute_import, print_function
 
 import colorsys
-from math import sin
 import random
 
 from mindorb.scenetypes import DUAL_COLOR_WITH_SOLIDS, LedColor, SceneBase
@@ -73,5 +72,4 @@ class TestHueFade(SceneBase):
             self._base_ts = frame_timestamp
 
         rgb = colorsys.hsv_to_rgb(ts_diff / self.HUE_PERIOD_S, 1, 255)
-        rgb = tuple(int(val) for val in rgb)
         self._ledbuffer.set_all(rgb)
