@@ -20,7 +20,7 @@ else:
     from DotStar_Emulator import Adafruit_DotStar
 
 from mindorb import scenes
-from mindorb.ledmapping import MemoryRackMapping
+import mindorb.ledmapping
 from mindorb.scenes import get_scene
 from mindorb.scenetypes import LedColor
 
@@ -34,7 +34,11 @@ class SpiDevice(Enum):
 
 
 class LedBuffer(object):
-    def __init__(self, num_pixels, brightness=0.25, mapping_class=None):
+    def __init__(self, num_pixels=None, brightness=0.25, mapping_class=None):
+        if mapping_class is not None:
+            # Mapping strip length overrides manually-supplied length
+            num_pixels = mapping_class.LED_STRIP_LEN
+
         # Initialize the buffer to all-black by default
         self.leds = list(repeat(LedColor.black.value, num_pixels))
         self.brightness = brightness
@@ -131,7 +135,8 @@ class ProjectorControl(object):
 
 class SceneManager(Thread):
     def __init__(
-        self, num_pixels,
+        self,
+        num_pixels=0, led_mapping=None,
         default_scene=None,
         spi_dev=SpiDevice.primary, spi_freq=1000000, led_order='bgr',
         video_manifest_url=None
@@ -139,9 +144,13 @@ class SceneManager(Thread):
         super(SceneManager, self).__init__(name="scene-manager")
         self.shutting_down = False
 
-        self.num_pixels = num_pixels
-        self.ledbuffer = LedBuffer(num_pixels, mapping_class=MemoryRackMapping)
-        print("SceneManager using {} pixels".format(num_pixels))
+        mapping_class = getattr(mindorb.ledmapping, led_mapping) \
+            if led_mapping is not None else None
+        self.ledbuffer = LedBuffer(num_pixels, mapping_class=mapping_class)
+        self.num_pixels = len(self.ledbuffer.leds)
+
+        print("SceneManager using mapping class: {}".format(led_mapping))
+        print("SceneManager using {} pixels".format(self.num_pixels))
 
         self.projector = ProjectorControl(video_manifest_url)
 
@@ -151,11 +160,11 @@ class SceneManager(Thread):
 
         if os.getenv('RESIN'):
             self._dotstar_strip = Adafruit_DotStar(
-                num_pixels, spi_freq, order=led_order
+                self.num_pixels, spi_freq, order=led_order
             )
         else:
             # Unfortunately: the emulator doesn't support the `order` kwarg...
-            self._dotstar_strip = Adafruit_DotStar(num_pixels)
+            self._dotstar_strip = Adafruit_DotStar(self.num_pixels)
 
         self._dotstar_strip.begin()
 

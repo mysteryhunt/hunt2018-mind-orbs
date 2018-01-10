@@ -7,6 +7,14 @@ from collections import namedtuple
 from mindorb.scenetypes import LedColor
 
 
+class HeroOrbMapping(object):
+    """Mapping for the Hero Orbs"""
+    LED_STRIP_LEN = 41
+
+    def __init__(self, leds):
+        self.leds = leds
+
+
 class MemoryRackOrb(object):
     """Represents a single logical orb on the memory rack"""
 
@@ -36,7 +44,6 @@ class MemoryRackOrb(object):
             self.leds[b_led] = color_b
 
 
-
 class MemoryRackMapping(object):
     """Maps the logical concept of orbs in a 2-dimension plane -> LED strips
 
@@ -46,6 +53,7 @@ class MemoryRackMapping(object):
     Section -> right -> left
     Orb -> right -> left
     """
+    LED_STRIP_LEN = 690
 
     def __init__(self, leds):
         self.leds = leds
