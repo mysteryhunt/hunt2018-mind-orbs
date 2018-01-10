@@ -2,6 +2,7 @@
 
 from __future__ import division, absolute_import, print_function
 
+import colorsys
 import random
 
 from mindorb.scenetypes import DUAL_COLOR_WITH_SOLIDS, LedColor, SceneBase
@@ -56,3 +57,19 @@ class TestMemoryRackRandom(SceneBase):
                             DUAL_COLOR_WITH_SOLIDS)))
 
             self._last_change = frame_timestamp
+
+
+class TestHueFade(SceneBase):
+    HUE_PERIOD_S = 10
+
+    def __init__(self, ledbuffer, fadetime):
+        super(TestHueFade, self).__init__(ledbuffer, fadetime)
+        self._base_ts = 0
+
+    def loop(self, frame_timestamp):
+        ts_diff = frame_timestamp - self._base_ts
+        if ts_diff > self.HUE_PERIOD_S:
+            self._base_ts = frame_timestamp
+
+        rgb = colorsys.hsv_to_rgb(ts_diff / self.HUE_PERIOD_S, 1, 255)
+        self._ledbuffer.set_all(rgb)

@@ -217,9 +217,9 @@ class SceneManager(Thread):
             color = self.ledbuffer.leds[idx]
             self._dotstar_strip.setPixelColor(
                 idx,
-                color[0] << (2 * 8) |
-                color[1] << (1 * 8) |
-                color[2] << (0 * 8)
+                int(round(color[0])) << (2 * 8) |
+                int(round(color[1])) << (1 * 8) |
+                int(round(color[2])) << (0 * 8)
             )
 
         self._dotstar_strip.show()
