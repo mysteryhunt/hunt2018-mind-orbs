@@ -40,3 +40,4 @@ class AllScenes(Enum):
     SolidYellow = solidcolor.SolidYellow
     SolidPurple = solidcolor.SolidPurple
     TestStripChase = test.TestStripChase
+    TestMemoryRackRandom = test.TestMemoryRackRandom

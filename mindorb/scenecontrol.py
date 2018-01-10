@@ -20,6 +20,7 @@ else:
     from DotStar_Emulator import Adafruit_DotStar
 
 from mindorb import scenes
+from mindorb.ledmapping import MemoryRackMapping
 from mindorb.scenes import get_scene
 from mindorb.scenetypes import LedColor
 
@@ -33,10 +34,13 @@ class SpiDevice(Enum):
 
 
 class LedBuffer(object):
-    def __init__(self, num_pixels, brightness=0.25):
+    def __init__(self, num_pixels, brightness=0.25, mapping_class=None):
         # Initialize the buffer to all-black by default
         self.leds = list(repeat(LedColor.black.value, num_pixels))
         self.brightness = brightness
+
+        if mapping_class is not None:
+            self.mapping = mapping_class(self.leds)
 
     def set_all(self, color):
         if isinstance(color, LedColor):
@@ -136,7 +140,7 @@ class SceneManager(Thread):
         self.shutting_down = False
 
         self.num_pixels = num_pixels
-        self.ledbuffer = LedBuffer(num_pixels)
+        self.ledbuffer = LedBuffer(num_pixels, mapping_class=MemoryRackMapping)
         print("SceneManager using {} pixels".format(num_pixels))
 
         self.projector = ProjectorControl(video_manifest_url)

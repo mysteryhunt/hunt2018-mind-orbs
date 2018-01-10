@@ -14,6 +14,15 @@ class LedColor(Enum):
     purple = (128, 0, 128)
 
 
+EMOTION_COLORS = {
+    LedColor.red,
+    LedColor.green,
+    LedColor.blue,
+    LedColor.yellow,
+    LedColor.purple
+}
+
+
 class SceneBase(object):
     def __init__(self, ledbuffer, fadetime):
         self._ledbuffer = ledbuffer
