@@ -2,7 +2,9 @@
 
 from __future__ import division, absolute_import, print_function
 
-from mindorb.scenetypes import SceneBase
+import random
+
+from mindorb.scenetypes import DUAL_COLOR_WITH_SOLIDS, LedColor, SceneBase
 
 
 class TestStripChase(SceneBase):
@@ -33,3 +35,24 @@ class TestStripChase(SceneBase):
         self.tail += 1  # Advance tail position
         if(self.tail >= self.numpixels):
             self.tail = 0  # Off end? Reset
+
+
+class TestMemoryRackRandom(SceneBase):
+    CHANGE_PERIOD = 1
+
+    def __init__(self, ledbuffer, fadetime):
+        super(TestMemoryRackRandom, self).__init__(ledbuffer, fadetime)
+        self._orbs = self._ledbuffer.mapping.shelf_section_orb_map
+        self._last_change = 0
+
+        self._ledbuffer.set_all(LedColor.black)
+
+    def loop(self, frame_timestamp):
+        if frame_timestamp - self._last_change > self.CHANGE_PERIOD:
+            for shelf in self._orbs:
+                for section in shelf:
+                    for orb in section:
+                        orb.set_colors(*random.choice(tuple(
+                            DUAL_COLOR_WITH_SOLIDS)))
+
+            self._last_change = frame_timestamp

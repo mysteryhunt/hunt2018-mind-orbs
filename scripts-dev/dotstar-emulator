@@ -3,7 +3,7 @@
 set -euf -o pipefail
 
 readonly SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-readonly CONFIG_DIR="${SCRIPT_DIR}/dotstar-emulator-config"
+readonly CONFIG_DIR="${SCRIPT_DIR}/dotstar-emulator-${MIND_ORB_LED_MAPPING:-"HeroOrbMapping"}"
 
 main() {
     pushd "${CONFIG_DIR}"

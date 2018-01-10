@@ -20,6 +20,7 @@ else:
     from DotStar_Emulator import Adafruit_DotStar
 
 from mindorb import scenes
+import mindorb.ledmapping
 from mindorb.scenes import get_scene
 from mindorb.scenetypes import LedColor
 
@@ -33,10 +34,12 @@ class SpiDevice(Enum):
 
 
 class LedBuffer(object):
-    def __init__(self, num_pixels, brightness=0.25):
+    def __init__(self, mapping_class, brightness=0.25):
         # Initialize the buffer to all-black by default
-        self.leds = list(repeat(LedColor.black.value, num_pixels))
+        self.leds = list(repeat(
+            LedColor.black.value, mapping_class.LED_STRIP_LEN))
         self.brightness = brightness
+        self.mapping = mapping_class(self.leds)
 
     def set_all(self, color):
         if isinstance(color, LedColor):
@@ -127,7 +130,7 @@ class ProjectorControl(object):
 
 class SceneManager(Thread):
     def __init__(
-        self, num_pixels,
+        self, led_mapping=None,
         default_scene=None,
         spi_dev=SpiDevice.primary, spi_freq=1000000, led_order='bgr',
         video_manifest_url=None
@@ -135,9 +138,13 @@ class SceneManager(Thread):
         super(SceneManager, self).__init__(name="scene-manager")
         self.shutting_down = False
 
-        self.num_pixels = num_pixels
-        self.ledbuffer = LedBuffer(num_pixels)
-        print("SceneManager using {} pixels".format(num_pixels))
+        mapping_class = getattr(mindorb.ledmapping, led_mapping) \
+            if led_mapping is not None else None
+        self.ledbuffer = LedBuffer(mapping_class=mapping_class)
+        self.num_pixels = len(self.ledbuffer.leds)
+
+        print("SceneManager using mapping class: {}".format(led_mapping))
+        print("SceneManager using {} pixels".format(self.num_pixels))
 
         self.projector = ProjectorControl(video_manifest_url)
 
@@ -147,11 +154,11 @@ class SceneManager(Thread):
 
         if os.getenv('RESIN'):
             self._dotstar_strip = Adafruit_DotStar(
-                num_pixels, spi_freq, order=led_order
+                self.num_pixels, spi_freq, order=led_order
             )
         else:
             # Unfortunately: the emulator doesn't support the `order` kwarg...
-            self._dotstar_strip = Adafruit_DotStar(num_pixels)
+            self._dotstar_strip = Adafruit_DotStar(self.num_pixels)
 
         self._dotstar_strip.begin()
 
@@ -190,7 +197,7 @@ class SceneManager(Thread):
             pass
 
     def _set_scene(self, new_scene, fadetime):
-        if self.scene.__class__ is new_scene.__class__:
+        if self.scene.__class__ is new_scene:
             # Make this a no-op if the scene has not changed
             print("Ignoring scene change: old={}, new={}".format(
                 self.scene, new_scene

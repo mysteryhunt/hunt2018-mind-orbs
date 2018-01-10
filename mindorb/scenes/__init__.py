@@ -8,6 +8,7 @@ import inspect
 from mindorb.scenetypes import SceneBase
 
 from . import interactions
+from . import memoryrack
 from . import solidcolor
 from . import test
 
@@ -33,6 +34,7 @@ class AllScenes(Enum):
     InteractionHacking = interactions.InteractionHacking
     InteractionPokemon = interactions.InteractionPokemon
     InteractionScifi = interactions.InteractionScifi
+    RackBreathingOrbs = memoryrack.RackBreathingOrbs
     SolidBlack = solidcolor.SolidBlack
     SolidRed = solidcolor.SolidRed
     SolidGreen = solidcolor.SolidGreen
@@ -40,3 +42,4 @@ class AllScenes(Enum):
     SolidYellow = solidcolor.SolidYellow
     SolidPurple = solidcolor.SolidPurple
     TestStripChase = test.TestStripChase
+    TestMemoryRackRandom = test.TestMemoryRackRandom
