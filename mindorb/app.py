@@ -42,8 +42,7 @@ def main():
     signal.signal(signal.SIGTERM, shutdown)
 
     scene_manager = SceneManager(
-        num_pixels=int(os.environ.get('MIND_ORB_LED_STRIP_LEN', 0)),
-        led_mapping=os.environ.get('MIND_ORB_LED_MAPPING'),
+        led_mapping=os.environ.get('MIND_ORB_LED_MAPPING', 'HeroOrbMapping'),
         default_scene=get_scene(os.environ.get('MIND_ORB_DEFAULT_SCENE')),
         video_manifest_url=os.environ.get('MIND_ORB_VIDEO_MANIFEST_URL')
     )

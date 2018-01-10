@@ -2,6 +2,7 @@
 
 from __future__ import division, absolute_import, print_function
 
+from mindorb.effects import breathe
 from mindorb.scenetypes import LedColor
 from mindorb.scenetypes import SceneBase
 
@@ -12,7 +13,8 @@ class SolidColorBase(SceneBase):
         self.color = color
 
     def loop(self, frame_timestamp):
-        self._ledbuffer.set_all(self.color)
+        breathe_color = breathe(frame_timestamp, self.color.value)
+        self._ledbuffer.set_all(breathe_color)
 
 
 class SolidBlack(SolidColorBase):

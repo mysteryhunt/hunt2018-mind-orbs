@@ -34,17 +34,12 @@ class SpiDevice(Enum):
 
 
 class LedBuffer(object):
-    def __init__(self, num_pixels=None, brightness=0.25, mapping_class=None):
-        if mapping_class is not None:
-            # Mapping strip length overrides manually-supplied length
-            num_pixels = mapping_class.LED_STRIP_LEN
-
+    def __init__(self, mapping_class, brightness=0.25):
         # Initialize the buffer to all-black by default
-        self.leds = list(repeat(LedColor.black.value, num_pixels))
+        self.leds = list(repeat(
+            LedColor.black.value, mapping_class.LED_STRIP_LEN))
         self.brightness = brightness
-
-        if mapping_class is not None:
-            self.mapping = mapping_class(self.leds)
+        self.mapping = mapping_class(self.leds)
 
     def set_all(self, color):
         if isinstance(color, LedColor):
@@ -135,8 +130,7 @@ class ProjectorControl(object):
 
 class SceneManager(Thread):
     def __init__(
-        self,
-        num_pixels=0, led_mapping=None,
+        self, led_mapping=None,
         default_scene=None,
         spi_dev=SpiDevice.primary, spi_freq=1000000, led_order='bgr',
         video_manifest_url=None
@@ -146,7 +140,7 @@ class SceneManager(Thread):
 
         mapping_class = getattr(mindorb.ledmapping, led_mapping) \
             if led_mapping is not None else None
-        self.ledbuffer = LedBuffer(num_pixels, mapping_class=mapping_class)
+        self.ledbuffer = LedBuffer(mapping_class=mapping_class)
         self.num_pixels = len(self.ledbuffer.leds)
 
         print("SceneManager using mapping class: {}".format(led_mapping))
