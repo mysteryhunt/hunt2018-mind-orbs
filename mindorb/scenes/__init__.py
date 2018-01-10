@@ -43,3 +43,4 @@ class AllScenes(Enum):
     SolidPurple = solidcolor.SolidPurple
     TestStripChase = test.TestStripChase
     TestMemoryRackRandom = test.TestMemoryRackRandom
+    TestHueFade = test.TestHueFade

@@ -24,8 +24,6 @@ class RackBreathingOrbs(SceneBase):
             self.orb_param_tracking.append(OrbParamTracker(
                 orb.colors, 3.5 + random.random(), random.random()))
 
-        # from IPython import embed; embed()
-
     def loop(self, frame_timestamp):
         for idx, orb in enumerate(self._all_orbs):
             params = self.orb_param_tracking[idx]
