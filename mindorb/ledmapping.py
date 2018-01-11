@@ -136,11 +136,9 @@ class MemoryRackMapping(object):
                 led_idxs[shelf_n][1][-2:] + led_idxs[shelf_n][2][:3]
 
             shift_orbs(shelf[2][1:3], 3)
-            shift_orbs(shelf[2][3:5], 4)
-            shift_orbs(shelf[2][5:7], 5)
-
-        # Additional shifting on the very top-left section
-        shift_orbs(shelf_sec_orb[1][2][4:8], 1)
+            shift_orbs(shelf[2][3:4], 4)
+            shift_orbs(shelf[2][4:5], 5)
+            shift_orbs(shelf[2][5:8], 6)
 
         all_orbs = list(
             chain.from_iterable(chain.from_iterable(shelf_sec_orb)))
