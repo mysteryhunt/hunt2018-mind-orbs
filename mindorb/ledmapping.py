@@ -113,14 +113,13 @@ class MemoryRackMapping(object):
         # particular orbs if necessary.
         def shift_orbs(orbs, shift_left):
             for orb in orbs:
-                orb.leds = [idx + shift_left for idx in orb.leds]
+                orb.led_ids = [idx + shift_left for idx in orb.led_ids]
 
         # Correct some alignment on the right-most sections
         for shelf in shelf_sec_orb:
             shift_orbs(shelf[0][0:2], 2)
             shift_orbs(shelf[0][2:4], 1)
             shift_orbs(shelf[0][6:7], -1)
-
 
         all_orbs = list(
             chain.from_iterable(chain.from_iterable(shelf_sec_orb)))
