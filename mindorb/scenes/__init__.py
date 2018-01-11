@@ -54,6 +54,7 @@ class AllScenes(Enum):
         kickoff.KickoffProjNetflixInsideOutBlueYellow
 
     RackBreathingOrbs = memoryrack.RackBreathingOrbs
+    RackFlickerOut = memoryrack.RackFlickerOut
 
     SolidBlack = solidcolor.SolidBlack
     SolidRed = solidcolor.SolidRed

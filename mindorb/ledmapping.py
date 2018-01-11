@@ -57,6 +57,9 @@ class MemoryRackMapping(object):
 
         self.shelf_section_orb_map, self.all_orbs = self._get_orb_mappings()
 
+        # Scene-to-scene param tracking for consistency in `RackFlickerOut`
+        self.orb_param_tracking = None
+
     def _get_orb_mappings(self):
         # For now: do the simplistic thing and evenly cut up each section
         # Shove orbs to the right
