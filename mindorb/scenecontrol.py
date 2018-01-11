@@ -3,6 +3,7 @@
 from __future__ import division, absolute_import, print_function
 
 import collections
+import copy
 from enum import Enum
 import hashlib
 from itertools import repeat
@@ -30,12 +31,21 @@ ORB_VIDEO_DIR = "/data/orb-video" if os.getenv('RESIN') else "/tmp/orb-video"
 
 
 class LedBuffer(object):
-    def __init__(self, mapping_class, brightness=0.25):
+    def __init__(self, mapping_class, brightness=0.25, initial_leds=None):
         # Initialize the buffer to all-black by default
-        self.leds = list(repeat(
-            LedColor.black.value, mapping_class.LED_STRIP_LEN))
+        if initial_leds is not None:
+            self.leds = copy.deepcopy(initial_leds)
+        else:
+            self.leds = list(repeat(
+                LedColor.black.value, mapping_class.LED_STRIP_LEN))
+
         self.brightness = brightness
         self.mapping = mapping_class(self.leds)
+
+    def __deepcopy__(self, _):
+        return LedBuffer(
+            self.mapping.__class__,
+            brightness=self.brightness, initial_leds=self.leds)
 
     def set_all(self, color):
         if isinstance(color, LedColor):
@@ -135,9 +145,9 @@ class SceneManager(Thread):
         super(SceneManager, self).__init__(name="scene-manager")
         self.shutting_down = False
 
-        mapping_class = getattr(mindorb.ledmapping, led_mapping) \
+        self.mapping_class = getattr(mindorb.ledmapping, led_mapping) \
             if led_mapping is not None else None
-        self.ledbuffer = LedBuffer(mapping_class=mapping_class)
+        self.ledbuffer = LedBuffer(mapping_class=self.mapping_class)
         self.num_pixels = len(self.ledbuffer.leds)
 
         print("SceneManager using mapping class: {}".format(led_mapping))
@@ -146,6 +156,7 @@ class SceneManager(Thread):
         self.projector = ProjectorControl(video_manifest_url)
 
         self._scene_queue = collections.deque()  # TODO: maybe bound this?
+        self.scene_outgoing = None
         self.scene = None
         self._set_scene(default_scene, 0)
 
@@ -228,9 +239,17 @@ class SceneManager(Thread):
 
         print("Changing scene: old={}, new={}, fadetime={}".format(
             self.scene, new_scene, fadetime))
-        self.scene = new_scene(self.ledbuffer, fadetime)
+
+        self.scene_outgoing = self.scene
+        if self.scene_outgoing is None:
+            outgoing_ledbuffer = LedBuffer(mapping_class=self.mapping_class)
+        else:
+            outgoing_ledbuffer = copy.deepcopy(self.scene_outgoing.ledbuffer)
+        self.scene = new_scene(outgoing_ledbuffer, fadetime)
 
     def _run_leds(self, frame_timestamp):
+        self.ledbuffer = self.scene.ledbuffer
+
         self._dotstar_strip.setBrightness(
             int(255 * self.ledbuffer.brightness)
         )

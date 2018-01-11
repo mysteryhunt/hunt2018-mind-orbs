@@ -14,7 +14,7 @@ class SolidColorBase(SceneBase):
 
     def loop(self, frame_timestamp):
         breathe_color = breathe(frame_timestamp, self.color.value)
-        self._ledbuffer.set_all(breathe_color)
+        self.ledbuffer.set_all(breathe_color)
 
 
 class SolidBlack(SolidColorBase):

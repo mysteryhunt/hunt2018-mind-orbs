@@ -16,7 +16,7 @@ OrbParamTracker = namedtuple('OrbParamTracker',
 class RackBreathingOrbs(SceneBase):
     def __init__(self, ledbuffer, fadetime):
         super(RackBreathingOrbs, self).__init__(ledbuffer, fadetime)
-        self._all_orbs = self._ledbuffer.mapping.all_orbs
+        self._all_orbs = self.ledbuffer.mapping.all_orbs
 
         self.orb_param_tracking = []
         for orb in self._all_orbs:
