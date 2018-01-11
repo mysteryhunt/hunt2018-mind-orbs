@@ -6,7 +6,7 @@ from __future__ import division, absolute_import, print_function
 from math import e, exp, pi, sin
 
 
-def breathe(ts, color, amp=0.60, period=5.0, phase=0.0):
+def breathe(ts, color, amp=0.60, period=3.0, phase=0.0):
     """Apply a "breathing" effect to the LED color
 
     Args:
