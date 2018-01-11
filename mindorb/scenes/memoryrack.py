@@ -51,7 +51,8 @@ class RackFlickerOut(SceneBase):
         self.orb_param_tracking = self.ledbuffer.mapping.orb_param_tracking
         self.out_start_ts = frame_timestamp
         self.out_orb_times = [
-            random.random() * self.ALL_OUT_DURATION for orb in self._all_orbs]
+            random.gauss(0.5, 0.1) * self.ALL_OUT_DURATION
+            for orb in self._all_orbs]
 
         self.ledbuffer.set_all(LedColor.black)
 
