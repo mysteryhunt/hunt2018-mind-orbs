@@ -34,7 +34,7 @@ class CommandReceiver(Thread):
                 for raw_message in self.connection:
                     message = json.loads(raw_message)
                     self.scene_manager.push_scene(message['scene'],
-                                                  message['fade'])
+                                                  message['fade'] / 1000000000)
             except websocket.WebSocketConnectionClosedException:
                 pass
             except StandardError:

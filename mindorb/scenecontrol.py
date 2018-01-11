@@ -34,7 +34,7 @@ class LedBuffer(object):
     def __init__(self, mapping_class, brightness=0.25, initial_leds=None):
         # Initialize the buffer to all-black by default
         if initial_leds is not None:
-            self.leds = copy.deepcopy(initial_leds)
+            self.leds = copy.copy(initial_leds)
         else:
             self.leds = list(repeat(
                 LedColor.black.value, mapping_class.LED_STRIP_LEN))
@@ -46,6 +46,23 @@ class LedBuffer(object):
         return LedBuffer(
             self.mapping.__class__,
             brightness=self.brightness, initial_leds=self.leds)
+
+    def set_from_other_buffer(self, other_buffer):
+        for idx, _ in enumerate(self.leds):
+            self.leds[idx] = other_buffer.leds[idx]
+
+    def set_from_crossfade(
+            self, incoming_buffer, outgoing_buffer, ts_relative, duration):
+        def ease(start, end):
+            # Sinusoidal easing
+            return (start - end) / 2 * \
+                (math.cos(math.pi * ts_relative / duration) - 1) + start
+
+        for idx, _ in enumerate(self.leds):
+            self.leds[idx] = tuple(
+                ease(outgoing_buffer.leds[idx][rgb],
+                     incoming_buffer.leds[idx][rgb])
+                for rgb in (0, 1, 2))
 
     def set_all(self, color):
         if isinstance(color, LedColor):
@@ -158,7 +175,10 @@ class SceneManager(Thread):
         self._scene_queue = collections.deque()  # TODO: maybe bound this?
         self.scene_outgoing = None
         self.scene = None
-        self._set_scene(default_scene, 0)
+        self._set_scene(default_scene, 0, time.time())
+
+        self.scene_change_start_ts = 0
+        self.scene_change_duration = 0
 
         if os.getenv('RESIN'):
             self._dotstar_strip = Adafruit_DotStar(
@@ -195,7 +215,7 @@ class SceneManager(Thread):
             self.scene.loop(frame_timestamp)
             self._run_leds(frame_timestamp)
             self._run_projector(frame_timestamp)
-            self._pop_scene()
+            self._pop_scene(frame_timestamp)
 
             self._run_perf(frame_timestamp)
 
@@ -221,15 +241,15 @@ class SceneManager(Thread):
         else:
             self.perf_frames += 1
 
-    def _pop_scene(self):
+    def _pop_scene(self, frame_timestamp):
         try:
             new_scene, fadetime = self._scene_queue.popleft()
-            self._set_scene(new_scene, fadetime)
+            self._set_scene(new_scene, fadetime, frame_timestamp)
         except IndexError:
             # This is fine -> no scene is available to change
             pass
 
-    def _set_scene(self, new_scene, fadetime):
+    def _set_scene(self, new_scene, fadetime, frame_timestamp):
         if self.scene.__class__ is new_scene:
             # Make this a no-op if the scene has not changed
             print("Ignoring scene change: old={}, new={}".format(
@@ -247,8 +267,20 @@ class SceneManager(Thread):
             outgoing_ledbuffer = copy.deepcopy(self.scene_outgoing.ledbuffer)
         self.scene = new_scene(outgoing_ledbuffer, fadetime)
 
+        self.scene_change_start_ts = frame_timestamp
+        self.scene_change_duration = fadetime
+
     def _run_leds(self, frame_timestamp):
-        self.ledbuffer = self.scene.ledbuffer
+        # Check if there's an in-progress scene change and do the crossfade
+        scene_change_progress = frame_timestamp - self.scene_change_start_ts
+        if scene_change_progress < self.scene_change_duration and \
+                self.scene_outgoing is not None:
+            self.ledbuffer.set_from_crossfade(
+                self.scene.ledbuffer, self.scene_outgoing.ledbuffer,
+                scene_change_progress, self.scene_change_duration)
+        else:
+            # print("Not crossfading")
+            self.ledbuffer.set_from_other_buffer(self.scene.ledbuffer)
 
         self._dotstar_strip.setBrightness(
             int(255 * self.ledbuffer.brightness)
