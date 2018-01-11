@@ -128,6 +128,22 @@ class MemoryRackMapping(object):
             shift_orbs(shelf[1][5:7], 3)
         shift_orbs(shelf_sec_orb[3][1][1:3], 1)
 
+        # Correct alignment on the left-most section
+        for shelf_n, shelf in enumerate(shelf_sec_orb[0:2]):
+            # Special-case the first one
+            # -> 3 LEDs from the left section + 2 from the middle
+            shelf[2][0].led_ids = \
+                led_idxs[shelf_n][1][-2:] + led_idxs[shelf_n][2][:3]
+
+            shift_orbs(shelf[2][1:3], 3)
+            shift_orbs(shelf[2][3:5], 4)
+            shift_orbs(shelf[2][5:7], 5)
+
+            # Add an 8th orb to the very left -> gets the 3 left-most LEDs
+            shelf[2].append(MemoryRackOrb(
+                shelf_n, 2, len(shelf[2]),
+                self.leds, led_idxs[shelf_n][2][-3:]))
+
         all_orbs = list(
             chain.from_iterable(chain.from_iterable(shelf_sec_orb)))
         return shelf_sec_orb, all_orbs
