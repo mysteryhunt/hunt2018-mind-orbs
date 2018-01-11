@@ -31,7 +31,9 @@ ORB_VIDEO_DIR = "/data/orb-video" if os.getenv('RESIN') else "/tmp/orb-video"
 
 
 class LedBuffer(object):
-    def __init__(self, mapping_class, brightness=0.25, initial_leds=None):
+    LED_BRIGHTNESS = float(os.environ.get('MIND_ORB_LED_BRIGHTNESS', '0.25'))
+
+    def __init__(self, mapping_class, brightness=None, initial_leds=None):
         # Initialize the buffer to all-black by default
         if initial_leds is not None:
             self.leds = copy.copy(initial_leds)
@@ -39,7 +41,8 @@ class LedBuffer(object):
             self.leds = list(repeat(
                 LedColor.black.value, mapping_class.LED_STRIP_LEN))
 
-        self.brightness = brightness
+        self.brightness = self.LED_BRIGHTNESS if brightness is None \
+            else brightness
         self.mapping = mapping_class(self.leds)
 
     def __deepcopy__(self, _):
