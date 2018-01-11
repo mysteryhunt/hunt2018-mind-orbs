@@ -7,7 +7,7 @@ import os
 import random
 
 from mindorb.effects import breathe
-from mindorb.scenetypes import DUAL_COLOR_WITH_SOLIDS, LedColor, SceneBase
+from mindorb.scenetypes import DUAL_COLORS, EMOTION_COLORS, LedColor, SceneBase
 
 
 OrbParamTracker = namedtuple('OrbParamTracker',
@@ -15,14 +15,23 @@ OrbParamTracker = namedtuple('OrbParamTracker',
 
 
 class RackBreathingOrbs(SceneBase):
+    SOLID_WEIGHT = \
+        int(os.environ.get('MIND_ORB_RACK_SOLID_WEIGHT', '5'))
+
     def __init__(self, ledbuffer, fadetime, frame_timestamp):
         super(RackBreathingOrbs, self).__init__(
             ledbuffer, fadetime, frame_timestamp)
         self._all_orbs = self.ledbuffer.mapping.all_orbs
 
+        orb_color_distribution = []
+        orb_color_distribution.extend(DUAL_COLORS)
+        for _ in range(0, self.SOLID_WEIGHT):
+            for single_color in EMOTION_COLORS:
+                orb_color_distribution.append((single_color, single_color))
+
         self.orb_param_tracking = []
         for orb in self._all_orbs:
-            orb.set_colors(*random.choice(tuple(DUAL_COLOR_WITH_SOLIDS)))
+            orb.set_colors(*random.choice(orb_color_distribution))
             self.orb_param_tracking.append(OrbParamTracker(
                 orb.colors, 3.5 + random.random(), random.random()))
         self.ledbuffer.mapping.orb_param_tracking = self.orb_param_tracking
@@ -51,7 +60,7 @@ class RackFlickerOut(SceneBase):
         self.orb_param_tracking = self.ledbuffer.mapping.orb_param_tracking
         self.out_start_ts = frame_timestamp
         self.out_orb_times = [
-            random.gauss(0.5, 0.1) * self.ALL_OUT_DURATION
+            random.gauss(0.5, 0.2) * self.ALL_OUT_DURATION
             for orb in self._all_orbs]
 
         self.ledbuffer.set_all(LedColor.black)
