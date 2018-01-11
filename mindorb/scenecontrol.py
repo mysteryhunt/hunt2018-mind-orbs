@@ -7,6 +7,7 @@ from enum import Enum
 import hashlib
 from itertools import repeat
 import json
+import math
 import os
 import signal
 import subprocess
@@ -133,7 +134,8 @@ class SceneManager(Thread):
         self, led_mapping=None,
         default_scene=None,
         spi_dev=SpiDevice.primary, spi_freq=1000000, led_order='bgr',
-        video_manifest_url=None
+        video_manifest_url=None,
+        target_frame_rate=60, perf_dump_pd=10
     ):
         super(SceneManager, self).__init__(name="scene-manager")
         self.shutting_down = False
@@ -162,6 +164,11 @@ class SceneManager(Thread):
 
         self._dotstar_strip.begin()
 
+        self.target_frame_rate = target_frame_rate
+        self.perf_dump_pd = perf_dump_pd
+        self.perf_last_dump = None
+        self.perf_frames = None
+
     def shutdown(self):
         self.shutting_down = True
 
@@ -184,9 +191,29 @@ class SceneManager(Thread):
             self._run_projector(frame_timestamp)
             self._pop_scene()
 
-            # time.sleep(1.0 / 60 - (time.time() - frame_timestamp))
+            self._run_perf(frame_timestamp)
+
+            desired_sleep = (
+                1.0 / self.target_frame_rate - (time.time() - frame_timestamp))
+            if desired_sleep > 0:
+                time.sleep(desired_sleep)
 
         self._cleanup()
+
+    def _run_perf(self, frame_timestamp):
+        if self.perf_last_dump is None:
+            self.perf_last_dump = frame_timestamp
+            self.perf_frames = 1
+
+        time_since_last_perf = frame_timestamp - self.perf_last_dump
+        if time_since_last_perf > self.perf_dump_pd:
+            print("SceneManager FPS: target={}, actual={}".format(
+                self.target_frame_rate,
+                self.perf_frames / time_since_last_perf))
+            self.perf_last_dump = frame_timestamp
+            self.perf_frames = 1
+        else:
+            self.perf_frames += 1
 
     def _pop_scene(self):
         try:

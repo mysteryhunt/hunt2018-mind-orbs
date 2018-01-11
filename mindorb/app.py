@@ -44,7 +44,10 @@ def main():
     scene_manager = SceneManager(
         led_mapping=os.environ.get('MIND_ORB_LED_MAPPING', 'HeroOrbMapping'),
         default_scene=get_scene(os.environ.get('MIND_ORB_DEFAULT_SCENE')),
-        video_manifest_url=os.environ.get('MIND_ORB_VIDEO_MANIFEST_URL')
+        video_manifest_url=os.environ.get('MIND_ORB_VIDEO_MANIFEST_URL'),
+        target_frame_rate=float(os.environ.get(
+            'MIND_ORB_TARGET_FRAMERATE', 60)),
+        perf_dump_pd=float(os.environ.get('MIND_ORB_PERF_DUMP_PD', 10))
     )
     threads.append(scene_manager)
     command_rcvr = CommandReceiver(scene_manager, websocket_url, device_id)
