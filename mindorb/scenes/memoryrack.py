@@ -6,7 +6,7 @@ from collections import namedtuple
 import random
 
 from mindorb.effects import breathe
-from mindorb.scenetypes import DUAL_COLOR_WITH_SOLIDS, SceneBase
+from mindorb.scenetypes import DUAL_COLOR_WITH_SOLIDS, LedColor, SceneBase
 
 
 OrbParamTracker = namedtuple('OrbParamTracker',
@@ -23,6 +23,8 @@ class RackBreathingOrbs(SceneBase):
             orb.set_colors(*random.choice(tuple(DUAL_COLOR_WITH_SOLIDS)))
             self.orb_param_tracking.append(OrbParamTracker(
                 orb.colors, 3.5 + random.random(), random.random()))
+
+        self.ledbuffer.set_all(LedColor.black)
 
     def loop(self, frame_timestamp):
         for idx, orb in enumerate(self._all_orbs):
