@@ -271,7 +271,7 @@ class SceneManager(Thread):
             outgoing_ledbuffer = LedBuffer(mapping_class=self.mapping_class)
         else:
             outgoing_ledbuffer = copy.deepcopy(self.scene_outgoing.ledbuffer)
-        self.scene = new_scene(outgoing_ledbuffer, fadetime)
+        self.scene = new_scene(outgoing_ledbuffer, fadetime, frame_timestamp)
 
         self.scene_change_start_ts = frame_timestamp
         self.scene_change_duration = fadetime

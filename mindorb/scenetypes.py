@@ -29,7 +29,7 @@ DUAL_COLOR_WITH_SOLIDS = set(combinations_with_replacement(EMOTION_COLORS, 2))
 
 
 class SceneBase(object):
-    def __init__(self, ledbuffer, fadetime):
+    def __init__(self, ledbuffer, fadetime, frame_timestamp):
         self.ledbuffer = ledbuffer
         self._fadetime = fadetime
 

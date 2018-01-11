@@ -8,8 +8,9 @@ from mindorb.scenetypes import SceneBase
 
 
 class SolidColorBase(SceneBase):
-    def __init__(self, ledbuffer, fadetime, color):
-        super(SolidColorBase, self).__init__(ledbuffer, fadetime)
+    def __init__(self, ledbuffer, fadetime, frame_timestamp, color):
+        super(SolidColorBase, self).__init__(
+            ledbuffer, fadetime, frame_timestamp)
         self.color = color
 
     def loop(self, frame_timestamp):
@@ -18,30 +19,36 @@ class SolidColorBase(SceneBase):
 
 
 class SolidBlack(SolidColorBase):
-    def __init__(self, ledbuffer, fadetime):
-        super(SolidBlack, self).__init__(ledbuffer, fadetime, LedColor.black)
+    def __init__(self, ledbuffer, fadetime, frame_timestamp):
+        super(SolidBlack, self).__init__(
+            ledbuffer, fadetime, frame_timestamp, LedColor.black)
 
 
 class SolidRed(SolidColorBase):
-    def __init__(self, ledbuffer, fadetime):
-        super(SolidRed, self).__init__(ledbuffer, fadetime, LedColor.red)
+    def __init__(self, ledbuffer, fadetime, frame_timestamp):
+        super(SolidRed, self).__init__(
+            ledbuffer, fadetime, frame_timestamp, LedColor.red)
 
 
 class SolidGreen(SolidColorBase):
-    def __init__(self, ledbuffer, fadetime):
-        super(SolidGreen, self).__init__(ledbuffer, fadetime, LedColor.green)
+    def __init__(self, ledbuffer, fadetime, frame_timestamp):
+        super(SolidGreen, self).__init__(
+            ledbuffer, fadetime, frame_timestamp, LedColor.green)
 
 
 class SolidBlue(SolidColorBase):
-    def __init__(self, ledbuffer, fadetime):
-        super(SolidBlue, self).__init__(ledbuffer, fadetime, LedColor.blue)
+    def __init__(self, ledbuffer, fadetime, frame_timestamp):
+        super(SolidBlue, self).__init__(
+            ledbuffer, fadetime, frame_timestamp, LedColor.blue)
 
 
 class SolidYellow(SolidColorBase):
-    def __init__(self, ledbuffer, fadetime):
-        super(SolidYellow, self).__init__(ledbuffer, fadetime, LedColor.yellow)
+    def __init__(self, ledbuffer, fadetime, frame_timestamp):
+        super(SolidYellow, self).__init__(
+            ledbuffer, fadetime, frame_timestamp, LedColor.yellow)
 
 
 class SolidPurple(SolidColorBase):
-    def __init__(self, ledbuffer, fadetime):
-        super(SolidPurple, self).__init__(ledbuffer, fadetime, LedColor.purple)
+    def __init__(self, ledbuffer, fadetime, frame_timestamp):
+        super(SolidPurple, self).__init__(
+            ledbuffer, fadetime, frame_timestamp, LedColor.purple)
