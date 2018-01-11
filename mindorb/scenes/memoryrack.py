@@ -58,8 +58,12 @@ class RackFlickerOut(SceneBase):
 
     def loop(self, frame_timestamp):
         for idx, orb in enumerate(self._all_orbs):
-            if frame_timestamp - self.out_start_ts > self.out_orb_times[idx]:
+            orb_zero_time = frame_timestamp - self.out_start_ts - \
+                self.out_orb_times[idx]
+            if orb_zero_time > 0.25:
                 orb.set_colors(LedColor.black, LedColor.black)
+            elif orb_zero_time > 0:
+                orb.set_colors(LedColor.white, LedColor.white)
             else:
                 params = self.orb_param_tracking[idx]
                 breathe_colors = tuple(
