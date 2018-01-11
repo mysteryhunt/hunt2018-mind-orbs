@@ -12,7 +12,7 @@ class InteractionGames(SceneBase):
         self.video_name = 'interaction-games'
 
     def loop(self, frame_timestamp):
-        self._ledbuffer.set_all(LedColor.red)
+        self.ledbuffer.set_all(LedColor.red)
         # TODO: add yellow combo
 
 
@@ -22,7 +22,7 @@ class InteractionHacking(SceneBase):
         self.video_name = 'interaction-hacking'
 
     def loop(self, frame_timestamp):
-        self._ledbuffer.set_all(LedColor.purple)
+        self.ledbuffer.set_all(LedColor.purple)
         # TODO: add yellow combo
 
 
@@ -32,7 +32,7 @@ class InteractionPokemon(SceneBase):
         self.video_name = 'interaction-pokemon'
 
     def loop(self, frame_timestamp):
-        self._ledbuffer.set_all(LedColor.green)
+        self.ledbuffer.set_all(LedColor.green)
         # TODO: add yellow combo
 
 
@@ -42,5 +42,5 @@ class InteractionScifi(SceneBase):
         self.video_name = 'interaction-scifi'
 
     def loop(self, frame_timestamp):
-        self._ledbuffer.set_all(LedColor.blue)
+        self.ledbuffer.set_all(LedColor.blue)
         # TODO: add yellow combo

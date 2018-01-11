@@ -111,6 +111,34 @@ class MemoryRackMapping(object):
         # At this point: the base map has been created
         # Here is where you'd go adjust the individual LED indices for
         # particular orbs if necessary.
+        def shift_orbs(orbs, shift_right):
+            for orb in orbs:
+                orb.led_ids = [idx + shift_right for idx in orb.led_ids]
+
+        # Correct alignment on the right-most sections
+        for shelf in shelf_sec_orb:
+            shift_orbs(shelf[0][0:2], -2)
+            shift_orbs(shelf[0][2:4], -1)
+            shift_orbs(shelf[0][6:7], 1)
+
+        # Correct alignment on the middle sections (lower / full bits)
+        for shelf in shelf_sec_orb[0:3]:
+            shift_orbs(shelf[1][1:3], 1)
+            shift_orbs(shelf[1][3:5], 2)
+            shift_orbs(shelf[1][5:7], 3)
+        shift_orbs(shelf_sec_orb[3][1][1:3], 1)
+
+        # Correct alignment on the left-most section
+        for shelf_n, shelf in enumerate(shelf_sec_orb[0:2]):
+            # Special-case the first one
+            # -> 3 LEDs from the left section + 2 from the middle
+            shelf[2][0].led_ids = \
+                led_idxs[shelf_n][1][-2:] + led_idxs[shelf_n][2][:3]
+
+            shift_orbs(shelf[2][1:3], 3)
+            shift_orbs(shelf[2][3:4], 4)
+            shift_orbs(shelf[2][4:5], 5)
+            shift_orbs(shelf[2][5:8], 6)
 
         all_orbs = list(
             chain.from_iterable(chain.from_iterable(shelf_sec_orb)))
