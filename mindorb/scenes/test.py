@@ -11,7 +11,7 @@ from mindorb.scenetypes import DUAL_COLOR_WITH_SOLIDS, LedColor, SceneBase
 class TestStripChase(SceneBase):
     def __init__(self, ledbuffer, fadetime):
         super(TestStripChase, self).__init__(ledbuffer, fadetime)
-        self.numpixels = len(self._ledbuffer.leds)
+        self.numpixels = len(self.ledbuffer.leds)
 
         self.head = 0  # Index of first 'on' pixel
         self.tail = -10  # Index of last 'off' pixel
@@ -20,11 +20,11 @@ class TestStripChase(SceneBase):
     def loop(self, frame_timestamp):
         # This test pattern adapted from:
         # https://github.com/adafruit/Adafruit_DotStar_Pi/blob/master/strandtest.py
-        self._ledbuffer.leds[self.head] = (
+        self.ledbuffer.leds[self.head] = (
             self.color >> 16 & 0xFF,
             self.color >> 8 & 0xFF,
             self.color & 0xFF)
-        self._ledbuffer.leds[self.tail] = (0, 0, 0)
+        self.ledbuffer.leds[self.tail] = (0, 0, 0)
 
         self.head += 1  # Advance head position
         if(self.head >= self.numpixels):  # Off end of strip?
@@ -43,10 +43,10 @@ class TestMemoryRackRandom(SceneBase):
 
     def __init__(self, ledbuffer, fadetime):
         super(TestMemoryRackRandom, self).__init__(ledbuffer, fadetime)
-        self._orbs = self._ledbuffer.mapping.shelf_section_orb_map
+        self._orbs = self.ledbuffer.mapping.shelf_section_orb_map
         self._last_change = 0
 
-        self._ledbuffer.set_all(LedColor.black)
+        self.ledbuffer.set_all(LedColor.black)
 
     def loop(self, frame_timestamp):
         if frame_timestamp - self._last_change > self.CHANGE_PERIOD:
@@ -72,4 +72,4 @@ class TestHueFade(SceneBase):
             self._base_ts = frame_timestamp
 
         rgb = colorsys.hsv_to_rgb(ts_diff / self.HUE_PERIOD_S, 1, 255)
-        self._ledbuffer.set_all(rgb)
+        self.ledbuffer.set_all(rgb)

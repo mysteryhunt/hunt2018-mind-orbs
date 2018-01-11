@@ -3,10 +3,12 @@
 from __future__ import division, absolute_import, print_function
 
 import collections
+import copy
 from enum import Enum
 import hashlib
 from itertools import repeat
 import json
+import math
 import os
 import signal
 import subprocess
@@ -28,18 +30,39 @@ from mindorb.scenetypes import LedColor
 ORB_VIDEO_DIR = "/data/orb-video" if os.getenv('RESIN') else "/tmp/orb-video"
 
 
-class SpiDevice(Enum):
-    primary = "/dev/spidev0.0"
-    secondary = "/dev/spidev0.1"
-
-
 class LedBuffer(object):
-    def __init__(self, mapping_class, brightness=0.25):
+    def __init__(self, mapping_class, brightness=0.25, initial_leds=None):
         # Initialize the buffer to all-black by default
-        self.leds = list(repeat(
-            LedColor.black.value, mapping_class.LED_STRIP_LEN))
+        if initial_leds is not None:
+            self.leds = copy.copy(initial_leds)
+        else:
+            self.leds = list(repeat(
+                LedColor.black.value, mapping_class.LED_STRIP_LEN))
+
         self.brightness = brightness
         self.mapping = mapping_class(self.leds)
+
+    def __deepcopy__(self, _):
+        return LedBuffer(
+            self.mapping.__class__,
+            brightness=self.brightness, initial_leds=self.leds)
+
+    def set_from_other_buffer(self, other_buffer):
+        for idx, _ in enumerate(self.leds):
+            self.leds[idx] = other_buffer.leds[idx]
+
+    def set_from_crossfade(
+            self, incoming_buffer, outgoing_buffer, ts_relative, duration):
+        def ease(start, end):
+            # Sinusoidal easing
+            return (start - end) / 2 * \
+                (math.cos(math.pi * ts_relative / duration) - 1) + start
+
+        for idx, _ in enumerate(self.leds):
+            self.leds[idx] = tuple(
+                ease(outgoing_buffer.leds[idx][rgb],
+                     incoming_buffer.leds[idx][rgb])
+                for rgb in (0, 1, 2))
 
     def set_all(self, color):
         if isinstance(color, LedColor):
@@ -132,15 +155,16 @@ class SceneManager(Thread):
     def __init__(
         self, led_mapping=None,
         default_scene=None,
-        spi_dev=SpiDevice.primary, spi_freq=1000000, led_order='bgr',
-        video_manifest_url=None
+        spi_freq=1000000, led_order='bgr',
+        video_manifest_url=None,
+        target_frame_rate=60, perf_dump_pd=10
     ):
         super(SceneManager, self).__init__(name="scene-manager")
         self.shutting_down = False
 
-        mapping_class = getattr(mindorb.ledmapping, led_mapping) \
+        self.mapping_class = getattr(mindorb.ledmapping, led_mapping) \
             if led_mapping is not None else None
-        self.ledbuffer = LedBuffer(mapping_class=mapping_class)
+        self.ledbuffer = LedBuffer(mapping_class=self.mapping_class)
         self.num_pixels = len(self.ledbuffer.leds)
 
         print("SceneManager using mapping class: {}".format(led_mapping))
@@ -149,8 +173,12 @@ class SceneManager(Thread):
         self.projector = ProjectorControl(video_manifest_url)
 
         self._scene_queue = collections.deque()  # TODO: maybe bound this?
+        self.scene_outgoing = None
         self.scene = None
-        self._set_scene(default_scene, 0)
+        self._set_scene(default_scene, 0, time.time())
+
+        self.scene_change_start_ts = 0
+        self.scene_change_duration = 0
 
         if os.getenv('RESIN'):
             self._dotstar_strip = Adafruit_DotStar(
@@ -161,6 +189,11 @@ class SceneManager(Thread):
             self._dotstar_strip = Adafruit_DotStar(self.num_pixels)
 
         self._dotstar_strip.begin()
+
+        self.target_frame_rate = target_frame_rate
+        self.perf_dump_pd = perf_dump_pd
+        self.perf_last_dump = None
+        self.perf_frames = None
 
     def shutdown(self):
         self.shutting_down = True
@@ -182,21 +215,41 @@ class SceneManager(Thread):
             self.scene.loop(frame_timestamp)
             self._run_leds(frame_timestamp)
             self._run_projector(frame_timestamp)
-            self._pop_scene()
+            self._pop_scene(frame_timestamp)
 
-            # time.sleep(1.0 / 60 - (time.time() - frame_timestamp))
+            self._run_perf(frame_timestamp)
+
+            desired_sleep = (
+                1.0 / self.target_frame_rate - (time.time() - frame_timestamp))
+            if desired_sleep > 0:
+                time.sleep(desired_sleep)
 
         self._cleanup()
 
-    def _pop_scene(self):
+    def _run_perf(self, frame_timestamp):
+        if self.perf_last_dump is None:
+            self.perf_last_dump = frame_timestamp
+            self.perf_frames = 1
+
+        time_since_last_perf = frame_timestamp - self.perf_last_dump
+        if time_since_last_perf > self.perf_dump_pd:
+            print("SceneManager FPS: target={}, actual={}".format(
+                self.target_frame_rate,
+                self.perf_frames / time_since_last_perf))
+            self.perf_last_dump = frame_timestamp
+            self.perf_frames = 1
+        else:
+            self.perf_frames += 1
+
+    def _pop_scene(self, frame_timestamp):
         try:
             new_scene, fadetime = self._scene_queue.popleft()
-            self._set_scene(new_scene, fadetime)
+            self._set_scene(new_scene, fadetime, frame_timestamp)
         except IndexError:
             # This is fine -> no scene is available to change
             pass
 
-    def _set_scene(self, new_scene, fadetime):
+    def _set_scene(self, new_scene, fadetime, frame_timestamp):
         if self.scene.__class__ is new_scene:
             # Make this a no-op if the scene has not changed
             print("Ignoring scene change: old={}, new={}".format(
@@ -206,9 +259,29 @@ class SceneManager(Thread):
 
         print("Changing scene: old={}, new={}, fadetime={}".format(
             self.scene, new_scene, fadetime))
-        self.scene = new_scene(self.ledbuffer, fadetime)
+
+        self.scene_outgoing = self.scene
+        if self.scene_outgoing is None:
+            outgoing_ledbuffer = LedBuffer(mapping_class=self.mapping_class)
+        else:
+            outgoing_ledbuffer = copy.deepcopy(self.scene_outgoing.ledbuffer)
+        self.scene = new_scene(outgoing_ledbuffer, fadetime)
+
+        self.scene_change_start_ts = frame_timestamp
+        self.scene_change_duration = fadetime
 
     def _run_leds(self, frame_timestamp):
+        # Check if there's an in-progress scene change and do the crossfade
+        scene_change_progress = frame_timestamp - self.scene_change_start_ts
+        if scene_change_progress < self.scene_change_duration and \
+                self.scene_outgoing is not None:
+            self.ledbuffer.set_from_crossfade(
+                self.scene.ledbuffer, self.scene_outgoing.ledbuffer,
+                scene_change_progress, self.scene_change_duration)
+        else:
+            # print("Not crossfading")
+            self.ledbuffer.set_from_other_buffer(self.scene.ledbuffer)
+
         self._dotstar_strip.setBrightness(
             int(255 * self.ledbuffer.brightness)
         )

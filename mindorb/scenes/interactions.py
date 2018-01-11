@@ -12,7 +12,7 @@ class InteractionGames(SceneBase):
         self.video_name = "interaction-games"
 
     def loop(self, frame_timestamp):
-        self._ledbuffer.set_all(LedColor.yellow)
+        self.ledbuffer.set_all(LedColor.yellow)
 
 
 class InteractionHacking(SceneBase):
@@ -21,7 +21,7 @@ class InteractionHacking(SceneBase):
         self.video_name = "interaction-hacking"
 
     def loop(self, frame_timestamp):
-        self._ledbuffer.set_all(LedColor.blue)
+        self.ledbuffer.set_all(LedColor.blue)
 
 
 class InteractionPokemon(SceneBase):
@@ -30,7 +30,7 @@ class InteractionPokemon(SceneBase):
         self.video_name = "interaction-pokemon"
 
     def loop(self, frame_timestamp):
-        self._ledbuffer.set_all(LedColor.green)
+        self.ledbuffer.set_all(LedColor.green)
 
 
 class InteractionScifi(SceneBase):
@@ -39,4 +39,4 @@ class InteractionScifi(SceneBase):
         self.video_name = "interaction-scifi"
 
     def loop(self, frame_timestamp):
-        self._ledbuffer.set_all(LedColor.yellow)
+        self.ledbuffer.set_all(LedColor.yellow)
