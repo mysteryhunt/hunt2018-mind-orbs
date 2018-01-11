@@ -184,7 +184,7 @@ class SceneManager(Thread):
             self._run_projector(frame_timestamp)
             self._pop_scene()
 
-            time.sleep(1.0 / 50)  # TODO: calculate real frame times
+            # time.sleep(1.0 / 60 - (time.time() - frame_timestamp))
 
         self._cleanup()
 
