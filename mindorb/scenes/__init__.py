@@ -8,6 +8,7 @@ import inspect
 from mindorb.scenetypes import SceneBase
 
 from . import interactions
+from . import kickoff
 from . import memoryrack
 from . import solidcolor
 from . import test
@@ -34,13 +35,33 @@ class AllScenes(Enum):
     InteractionHacking = interactions.InteractionHacking
     InteractionPokemon = interactions.InteractionPokemon
     InteractionScifi = interactions.InteractionScifi
+
+    KickoffCoreGames = kickoff.KickoffCoreGames
+    KickoffCoreHacking = kickoff.KickoffCoreHacking
+    KickoffCorePokemon = kickoff.KickoffCorePokemon
+    KickoffCoreScifi = kickoff.KickoffCoreScifi
+
+    KickoffProjDuckHunt = kickoff.KickoffProjDuckHunt
+
+    KickoffProjTriviaLouie = kickoff.KickoffProjTriviaLouie
+    KickoffProjTriviaZyzzlvaria = kickoff.KickoffProjTriviaZyzzlvaria
+    KickoffProjTriviaNpl = kickoff.KickoffProjTriviaNpl
+
+    KickoffProjNetflixFindingDory = kickoff.KickoffProjNetflixFindingDory
+    KickoffProjNetflixGoodDinosaur = kickoff.KickoffProjNetflixGoodDinosaur
+    KickoffProjNetflixInsideOut = kickoff.KickoffProjNetflixInsideOut
+    KickoffProjNetflixInsideOutBlueYellow = \
+        kickoff.KickoffProjNetflixInsideOutBlueYellow
+
     RackBreathingOrbs = memoryrack.RackBreathingOrbs
+
     SolidBlack = solidcolor.SolidBlack
     SolidRed = solidcolor.SolidRed
     SolidGreen = solidcolor.SolidGreen
     SolidBlue = solidcolor.SolidBlue
     SolidYellow = solidcolor.SolidYellow
     SolidPurple = solidcolor.SolidPurple
+
     TestStripChase = test.TestStripChase
     TestMemoryRackRandom = test.TestMemoryRackRandom
     TestHueFade = test.TestHueFade
