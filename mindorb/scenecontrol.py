@@ -285,8 +285,13 @@ class SceneManager(Thread):
                 self.scene.ledbuffer, self.scene_outgoing.ledbuffer,
                 scene_change_progress, self.scene_change_duration)
         else:
-            # print("Not crossfading")
             self.ledbuffer.set_from_other_buffer(self.scene.ledbuffer)
+
+        # Special-case the the up-facing LED off in there is a video running
+        if self.scene.video_name is not None and \
+                isinstance(self.ledbuffer.mapping,
+                           mindorb.ledmapping.HeroOrbMapping):
+            self.ledbuffer.leds[40] = LedColor.black.value
 
         self._dotstar_strip.setBrightness(
             int(255 * self.ledbuffer.brightness)
