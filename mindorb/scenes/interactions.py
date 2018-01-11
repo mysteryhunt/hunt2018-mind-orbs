@@ -7,8 +7,9 @@ from mindorb.scenetypes import SceneBase
 
 
 class InteractionGames(SceneBase):
-    def __init__(self, ledbuffer, fadetime):
-        super(InteractionGames, self).__init__(ledbuffer, fadetime)
+    def __init__(self, ledbuffer, fadetime, frame_timestamp):
+        super(InteractionGames, self).__init__(
+            ledbuffer, fadetime, frame_timestamp)
         self.video_name = 'interaction-games'
 
     def loop(self, frame_timestamp):
@@ -17,8 +18,9 @@ class InteractionGames(SceneBase):
 
 
 class InteractionHacking(SceneBase):
-    def __init__(self, ledbuffer, fadetime):
-        super(InteractionHacking, self).__init__(ledbuffer, fadetime)
+    def __init__(self, ledbuffer, fadetime, frame_timestamp):
+        super(InteractionHacking, self).__init__(
+            ledbuffer, fadetime, frame_timestamp)
         self.video_name = 'interaction-hacking'
 
     def loop(self, frame_timestamp):
@@ -27,8 +29,9 @@ class InteractionHacking(SceneBase):
 
 
 class InteractionPokemon(SceneBase):
-    def __init__(self, ledbuffer, fadetime):
-        super(InteractionPokemon, self).__init__(ledbuffer, fadetime)
+    def __init__(self, ledbuffer, fadetime, frame_timestamp):
+        super(InteractionPokemon, self).__init__(
+            ledbuffer, fadetime, frame_timestamp)
         self.video_name = 'interaction-pokemon'
 
     def loop(self, frame_timestamp):
@@ -37,8 +40,9 @@ class InteractionPokemon(SceneBase):
 
 
 class InteractionScifi(SceneBase):
-    def __init__(self, ledbuffer, fadetime):
-        super(InteractionScifi, self).__init__(ledbuffer, fadetime)
+    def __init__(self, ledbuffer, fadetime, frame_timestamp):
+        super(InteractionScifi, self).__init__(
+            ledbuffer, fadetime, frame_timestamp)
         self.video_name = 'interaction-scifi'
 
     def loop(self, frame_timestamp):

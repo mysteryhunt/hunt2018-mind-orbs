@@ -9,8 +9,9 @@ from mindorb.scenetypes import DUAL_COLOR_WITH_SOLIDS, LedColor, SceneBase
 
 
 class TestStripChase(SceneBase):
-    def __init__(self, ledbuffer, fadetime):
-        super(TestStripChase, self).__init__(ledbuffer, fadetime)
+    def __init__(self, ledbuffer, fadetime, frame_timestamp):
+        super(TestStripChase, self).__init__(
+            ledbuffer, fadetime, frame_timestamp)
         self.numpixels = len(self.ledbuffer.leds)
 
         self.head = 0  # Index of first 'on' pixel
@@ -41,8 +42,9 @@ class TestStripChase(SceneBase):
 class TestMemoryRackRandom(SceneBase):
     CHANGE_PERIOD = 1
 
-    def __init__(self, ledbuffer, fadetime):
-        super(TestMemoryRackRandom, self).__init__(ledbuffer, fadetime)
+    def __init__(self, ledbuffer, fadetime, frame_timestamp):
+        super(TestMemoryRackRandom, self).__init__(
+            ledbuffer, fadetime, frame_timestamp)
         self._orbs = self.ledbuffer.mapping.shelf_section_orb_map
         self._last_change = 0
 
@@ -62,8 +64,8 @@ class TestMemoryRackRandom(SceneBase):
 class TestHueFade(SceneBase):
     HUE_PERIOD_S = 10
 
-    def __init__(self, ledbuffer, fadetime):
-        super(TestHueFade, self).__init__(ledbuffer, fadetime)
+    def __init__(self, ledbuffer, fadetime, frame_timestamp):
+        super(TestHueFade, self).__init__(ledbuffer, fadetime, frame_timestamp)
         self._base_ts = 0
 
     def loop(self, frame_timestamp):

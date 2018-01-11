@@ -43,9 +43,15 @@ class LedBuffer(object):
         self.mapping = mapping_class(self.leds)
 
     def __deepcopy__(self, _):
-        return LedBuffer(
+        new_buffer = LedBuffer(
             self.mapping.__class__,
             brightness=self.brightness, initial_leds=self.leds)
+
+        if hasattr(self.mapping, 'orb_param_tracking'):
+            new_buffer.mapping.orb_param_tracking = \
+                self.mapping.orb_param_tracking
+
+        return new_buffer
 
     def set_from_other_buffer(self, other_buffer):
         for idx, _ in enumerate(self.leds):
@@ -265,7 +271,7 @@ class SceneManager(Thread):
             outgoing_ledbuffer = LedBuffer(mapping_class=self.mapping_class)
         else:
             outgoing_ledbuffer = copy.deepcopy(self.scene_outgoing.ledbuffer)
-        self.scene = new_scene(outgoing_ledbuffer, fadetime)
+        self.scene = new_scene(outgoing_ledbuffer, fadetime, frame_timestamp)
 
         self.scene_change_start_ts = frame_timestamp
         self.scene_change_duration = fadetime

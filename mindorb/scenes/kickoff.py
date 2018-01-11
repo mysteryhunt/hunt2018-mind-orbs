@@ -8,8 +8,9 @@ from mindorb.scenetypes import SceneBase
 
 
 class KickoffCoreGames(SceneBase):
-    def __init__(self, ledbuffer, fadetime):
-        super(KickoffCoreGames, self).__init__(ledbuffer, fadetime)
+    def __init__(self, ledbuffer, fadetime, frame_timestamp):
+        super(KickoffCoreGames, self).__init__(
+            ledbuffer, fadetime, frame_timestamp)
         self.video_name = 'kickoff-core-games'
 
     def loop(self, frame_timestamp):
@@ -18,8 +19,9 @@ class KickoffCoreGames(SceneBase):
 
 
 class KickoffCoreHacking(SceneBase):
-    def __init__(self, ledbuffer, fadetime):
-        super(KickoffCoreHacking, self).__init__(ledbuffer, fadetime)
+    def __init__(self, ledbuffer, fadetime, frame_timestamp):
+        super(KickoffCoreHacking, self).__init__(
+            ledbuffer, fadetime, frame_timestamp)
         self.video_name = 'kickoff-core-hacking'
 
     def loop(self, frame_timestamp):
@@ -28,8 +30,9 @@ class KickoffCoreHacking(SceneBase):
 
 
 class KickoffCorePokemon(SceneBase):
-    def __init__(self, ledbuffer, fadetime):
-        super(KickoffCorePokemon, self).__init__(ledbuffer, fadetime)
+    def __init__(self, ledbuffer, fadetime, frame_timestamp):
+        super(KickoffCorePokemon, self).__init__(
+            ledbuffer, fadetime, frame_timestamp)
         self.video_name = 'kickoff-core-pokemon'
 
     def loop(self, frame_timestamp):
@@ -38,8 +41,9 @@ class KickoffCorePokemon(SceneBase):
 
 
 class KickoffCoreScifi(SceneBase):
-    def __init__(self, ledbuffer, fadetime):
-        super(KickoffCoreScifi, self).__init__(ledbuffer, fadetime)
+    def __init__(self, ledbuffer, fadetime, frame_timestamp):
+        super(KickoffCoreScifi, self).__init__(
+            ledbuffer, fadetime, frame_timestamp)
         self.video_name = 'kickoff-core-scifi'
 
     def loop(self, frame_timestamp):
@@ -48,8 +52,9 @@ class KickoffCoreScifi(SceneBase):
 
 
 class KickoffProjDuckHunt(SceneBase):
-    def __init__(self, ledbuffer, fadetime):
-        super(KickoffProjDuckHunt, self).__init__(ledbuffer, fadetime)
+    def __init__(self, ledbuffer, fadetime, frame_timestamp):
+        super(KickoffProjDuckHunt, self).__init__(
+            ledbuffer, fadetime, frame_timestamp)
         self.video_name = 'kickoff-solo-duckhunt'
 
     def loop(self, frame_timestamp):
@@ -58,51 +63,51 @@ class KickoffProjDuckHunt(SceneBase):
 
 
 class KickoffProjTriviaLouie(SolidColorBase):
-    def __init__(self, ledbuffer, fadetime):
+    def __init__(self, ledbuffer, fadetime, frame_timestamp):
         super(KickoffProjTriviaLouie, self).__init__(
-            ledbuffer, fadetime, LedColor.yellow)
+            ledbuffer, fadetime, frame_timestamp, LedColor.yellow)
         self.video_name = 'kickoff-trio-trivia-a-louie'
 
 
 class KickoffProjTriviaZyzzlvaria(SolidColorBase):
-    def __init__(self, ledbuffer, fadetime):
+    def __init__(self, ledbuffer, fadetime, frame_timestamp):
         super(KickoffProjTriviaZyzzlvaria, self).__init__(
-            ledbuffer, fadetime, LedColor.yellow)
+            ledbuffer, fadetime, frame_timestamp, LedColor.yellow)
         self.video_name = 'kickoff-trio-trivia-b-zyzzlvaria'
 
 
 class KickoffProjTriviaNpl(SolidColorBase):
-    def __init__(self, ledbuffer, fadetime):
+    def __init__(self, ledbuffer, fadetime, frame_timestamp):
         super(KickoffProjTriviaNpl, self).__init__(
-            ledbuffer, fadetime, LedColor.blue)
+            ledbuffer, fadetime, frame_timestamp, LedColor.blue)
         self.video_name = 'kickoff-trio-trivia-c-npl'
 
 
 class KickoffProjNetflixFindingDory(SolidColorBase):
-    def __init__(self, ledbuffer, fadetime):
+    def __init__(self, ledbuffer, fadetime, frame_timestamp):
         super(KickoffProjNetflixFindingDory, self).__init__(
-            ledbuffer, fadetime, LedColor.blue)
+            ledbuffer, fadetime, frame_timestamp, LedColor.blue)
         self.video_name = 'kickoff-trio-netflix-a-findingdory'
 
 
 class KickoffProjNetflixGoodDinosaur(SolidColorBase):
-    def __init__(self, ledbuffer, fadetime):
+    def __init__(self, ledbuffer, fadetime, frame_timestamp):
         super(KickoffProjNetflixGoodDinosaur, self).__init__(
-            ledbuffer, fadetime, LedColor.blue)
+            ledbuffer, fadetime, frame_timestamp, LedColor.blue)
         self.video_name = 'kickoff-trio-netflix-b-gooddinosaur'
 
 
 class KickoffProjNetflixInsideOut(SolidColorBase):
-    def __init__(self, ledbuffer, fadetime):
+    def __init__(self, ledbuffer, fadetime, frame_timestamp):
         super(KickoffProjNetflixInsideOut, self).__init__(
-            ledbuffer, fadetime, LedColor.blue)
+            ledbuffer, fadetime, frame_timestamp, LedColor.blue)
         self.video_name = 'kickoff-trio-netflix-c-insideout'
 
 
 class KickoffProjNetflixInsideOutBlueYellow(SceneBase):
-    def __init__(self, ledbuffer, fadetime):
+    def __init__(self, ledbuffer, fadetime, frame_timestamp):
         super(KickoffProjNetflixInsideOutBlueYellow, self).__init__(
-            ledbuffer, fadetime)
+            ledbuffer, fadetime, frame_timestamp)
         self.video_name = 'kickoff-trio-netflix-c-insideout'
 
     def loop(self, frame_timestamp):
