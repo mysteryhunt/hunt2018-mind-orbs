@@ -29,11 +29,6 @@ from mindorb.scenetypes import LedColor
 ORB_VIDEO_DIR = "/data/orb-video" if os.getenv('RESIN') else "/tmp/orb-video"
 
 
-class SpiDevice(Enum):
-    primary = "/dev/spidev0.0"
-    secondary = "/dev/spidev0.1"
-
-
 class LedBuffer(object):
     def __init__(self, mapping_class, brightness=0.25):
         # Initialize the buffer to all-black by default
@@ -133,7 +128,7 @@ class SceneManager(Thread):
     def __init__(
         self, led_mapping=None,
         default_scene=None,
-        spi_dev=SpiDevice.primary, spi_freq=1000000, led_order='bgr',
+        spi_freq=1000000, led_order='bgr',
         video_manifest_url=None,
         target_frame_rate=60, perf_dump_pd=10
     ):
