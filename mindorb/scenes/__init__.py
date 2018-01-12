@@ -44,14 +44,17 @@ class AllScenes(Enum):
     KickoffProjDuckHunt = kickoff.KickoffProjDuckHunt
 
     KickoffProjTriviaLouie = kickoff.KickoffProjTriviaLouie
+    KickoffProjTriviaLouieTouched = kickoff.KickoffProjTriviaLouieTouched
     KickoffProjTriviaZyzzlvaria = kickoff.KickoffProjTriviaZyzzlvaria
+    KickoffProjTriviaZyzzlvariaTouched = \
+        kickoff.KickoffProjTriviaZyzzlvariaTouched
     KickoffProjTriviaNpl = kickoff.KickoffProjTriviaNpl
 
     KickoffProjNetflixFindingDory = kickoff.KickoffProjNetflixFindingDory
     KickoffProjNetflixGoodDinosaur = kickoff.KickoffProjNetflixGoodDinosaur
     KickoffProjNetflixInsideOut = kickoff.KickoffProjNetflixInsideOut
-    KickoffProjNetflixInsideOutBlueYellow = \
-        kickoff.KickoffProjNetflixInsideOutBlueYellow
+    KickoffProjNetflixInsideOutTouched = \
+        kickoff.KickoffProjNetflixInsideOutTouched
 
     RackBreathingOrbs = memoryrack.RackBreathingOrbs
     RackFlickerOut = memoryrack.RackFlickerOut

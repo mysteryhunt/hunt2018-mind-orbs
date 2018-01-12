@@ -14,6 +14,8 @@ class HeroOrbMapping(object):
 
     def __init__(self, leds):
         self.leds = leds
+        self.leds_left_idxs = range(0, 12) + range(26, 34)
+        self.leds_right_idxs = range(12, 24) + range(34, 40) + [24, 25]
 
 
 class MemoryRackOrb(object):

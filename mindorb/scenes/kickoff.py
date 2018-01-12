@@ -2,64 +2,49 @@
 
 from __future__ import division, absolute_import, print_function
 
+from mindorb.scenes.dualcolor import HeroOrbDualColor
 from mindorb.scenes.solidcolor import SolidColorBase
 from mindorb.scenetypes import LedColor
-from mindorb.scenetypes import SceneBase
 
 
-class KickoffCoreGames(SceneBase):
+class KickoffCoreGames(HeroOrbDualColor):
     def __init__(self, ledbuffer, fadetime, frame_timestamp):
         super(KickoffCoreGames, self).__init__(
-            ledbuffer, fadetime, frame_timestamp)
+            ledbuffer, fadetime, frame_timestamp,
+            (LedColor.red, LedColor.yellow))
         self.video_name = 'kickoff-core-games'
 
-    def loop(self, frame_timestamp):
-        self._ledbuffer.set_all(LedColor.red)
-        # TODO: add yellow combo
 
-
-class KickoffCoreHacking(SceneBase):
+class KickoffCoreHacking(HeroOrbDualColor):
     def __init__(self, ledbuffer, fadetime, frame_timestamp):
         super(KickoffCoreHacking, self).__init__(
-            ledbuffer, fadetime, frame_timestamp)
+            ledbuffer, fadetime, frame_timestamp,
+            (LedColor.purple, LedColor.yellow))
         self.video_name = 'kickoff-core-hacking'
 
-    def loop(self, frame_timestamp):
-        self._ledbuffer.set_all(LedColor.purple)
-        # TODO: add yellow combo
 
-
-class KickoffCorePokemon(SceneBase):
+class KickoffCorePokemon(HeroOrbDualColor):
     def __init__(self, ledbuffer, fadetime, frame_timestamp):
         super(KickoffCorePokemon, self).__init__(
-            ledbuffer, fadetime, frame_timestamp)
+            ledbuffer, fadetime, frame_timestamp,
+            (LedColor.green, LedColor.yellow))
         self.video_name = 'kickoff-core-pokemon'
 
-    def loop(self, frame_timestamp):
-        self._ledbuffer.set_all(LedColor.green)
-        # TODO: add yellow combo
 
-
-class KickoffCoreScifi(SceneBase):
+class KickoffCoreScifi(HeroOrbDualColor):
     def __init__(self, ledbuffer, fadetime, frame_timestamp):
         super(KickoffCoreScifi, self).__init__(
-            ledbuffer, fadetime, frame_timestamp)
+            ledbuffer, fadetime, frame_timestamp,
+            (LedColor.blue, LedColor.yellow))
         self.video_name = 'kickoff-core-scifi'
 
-    def loop(self, frame_timestamp):
-        self._ledbuffer.set_all(LedColor.blue)
-        # TODO: add yellow combo
 
-
-class KickoffProjDuckHunt(SceneBase):
+class KickoffProjDuckHunt(HeroOrbDualColor):
     def __init__(self, ledbuffer, fadetime, frame_timestamp):
         super(KickoffProjDuckHunt, self).__init__(
-            ledbuffer, fadetime, frame_timestamp)
+            ledbuffer, fadetime, frame_timestamp,
+            (LedColor.red, LedColor.blue))
         self.video_name = 'kickoff-solo-duckhunt'
-
-    def loop(self, frame_timestamp):
-        self._ledbuffer.set_all(LedColor.red)
-        # TODO: add blue combo
 
 
 class KickoffProjTriviaLouie(SolidColorBase):
@@ -69,10 +54,26 @@ class KickoffProjTriviaLouie(SolidColorBase):
         self.video_name = 'kickoff-trio-trivia-a-louie'
 
 
+class KickoffProjTriviaLouieTouched(HeroOrbDualColor):
+    def __init__(self, ledbuffer, fadetime, frame_timestamp):
+        super(KickoffProjTriviaLouieTouched, self).__init__(
+            ledbuffer, fadetime, frame_timestamp,
+            (LedColor.yellow, LedColor.blue))
+        self.video_name = 'kickoff-trio-trivia-a-louie'
+
+
 class KickoffProjTriviaZyzzlvaria(SolidColorBase):
     def __init__(self, ledbuffer, fadetime, frame_timestamp):
         super(KickoffProjTriviaZyzzlvaria, self).__init__(
             ledbuffer, fadetime, frame_timestamp, LedColor.yellow)
+        self.video_name = 'kickoff-trio-trivia-b-zyzzlvaria'
+
+
+class KickoffProjTriviaZyzzlvariaTouched(HeroOrbDualColor):
+    def __init__(self, ledbuffer, fadetime, frame_timestamp):
+        super(KickoffProjTriviaZyzzlvariaTouched, self).__init__(
+            ledbuffer, fadetime, frame_timestamp,
+            (LedColor.yellow, LedColor.blue))
         self.video_name = 'kickoff-trio-trivia-b-zyzzlvaria'
 
 
@@ -104,12 +105,9 @@ class KickoffProjNetflixInsideOut(SolidColorBase):
         self.video_name = 'kickoff-trio-netflix-c-insideout'
 
 
-class KickoffProjNetflixInsideOutBlueYellow(SceneBase):
+class KickoffProjNetflixInsideOutTouched(HeroOrbDualColor):
     def __init__(self, ledbuffer, fadetime, frame_timestamp):
-        super(KickoffProjNetflixInsideOutBlueYellow, self).__init__(
-            ledbuffer, fadetime, frame_timestamp)
+        super(KickoffProjNetflixInsideOutTouched, self).__init__(
+            ledbuffer, fadetime, frame_timestamp,
+            (LedColor.yellow, LedColor.blue))
         self.video_name = 'kickoff-trio-netflix-c-insideout'
-
-    def loop(self, frame_timestamp):
-        self._ledbuffer.set_all(LedColor.blue)
-        # TODO: add yellow combo
