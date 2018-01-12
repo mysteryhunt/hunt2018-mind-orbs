@@ -50,7 +50,7 @@ class RackBreathingOrbs(SceneBase):
 
 class RackFlickerOut(SceneBase):
     ALL_OUT_DURATION = \
-        int(os.environ.get('MIND_ORB_RACK_FLICKER_OUT_DURATION', '5'))
+        int(os.environ.get('MIND_ORB_RACK_FLICKER_OUT_DURATION', '3'))
 
     def __init__(self, ledbuffer, fadetime, frame_timestamp):
         super(RackFlickerOut, self).__init__(
