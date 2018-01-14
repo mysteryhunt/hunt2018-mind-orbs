@@ -35,6 +35,7 @@ class AllScenes(Enum):
     InteractionHacking = interactions.InteractionHacking
     InteractionPokemon = interactions.InteractionPokemon
     InteractionScifi = interactions.InteractionScifi
+    InteractionFinaleWin = interactions.InteractionFinaleWin
 
     KickoffCoreGames = kickoff.KickoffCoreGames
     KickoffCoreHacking = kickoff.KickoffCoreHacking
