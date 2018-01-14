@@ -36,3 +36,10 @@ class InteractionScifi(HeroOrbDualColor):
             ledbuffer, fadetime, frame_timestamp,
             (LedColor.blue, LedColor.yellow))
         self.video_name = 'interaction-scifi'
+
+class InteractionFinaleWin(HeroOrbDualColor):
+    def __init__(self, ledbuffer, fadetime, frame_timestamp):
+        super(InteractionFinaleWin, self).__init__(
+            ledbuffer, fadetime, frame_timestamp,
+            (LedColor.yellow, LedColor.yellow))
+        self.video_name = 'interaction-finale-win'
